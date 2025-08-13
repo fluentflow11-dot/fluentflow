@@ -1,0 +1,431 @@
+Project: FluentFlow (Loora AI-level English Learning App)
+Owner: USER1
+Last Updated: 2025-08-12
+
+0. Intent
+- Build a production-quality app on par with Loora AI. No MVP shortcuts. Use Flutter + Firebase. Capture all visible product surfaces from provided assets and external research, including onboarding, home/daily lessons, practice drills, league, profile/achievements, settings, subscriptions, and real-time conversation with AI feedback.
+
+1. Frameworks & Platforms
+- Client: Flutter (stable LTS channel), Dart latest stable.
+- Platforms: Android (primary), iOS (secondary, parity tracked), Web (PWA) optional after Android GA.
+- State: Riverpod or Bloc (choose one; preference: Riverpod + Freezed for models).
+- Theming: Material 3 + custom design tokens (see UI rules).
+- Firebase SDKs: Auth, Firestore, Storage, Functions, Remote Config, Crashlytics, Analytics, App Check, Cloud Messaging (notifications), In-App Messaging.
+- Payments: Google Play Billing (via `in_app_purchase` or `purchases_flutter`), Apple IAP for iOS parity.
+
+2. Architectural Approach
+- Clean architecture with feature modules: `onboarding`, `home`, `lesson`, `practice`, `conversation`, `league`, `profile`, `settings`, `subscription`, `shared`.
+- MVVM with Riverpod providers; immutable models (Freezed) and JSON serialization.
+- Offline-first patterns: local cache using `hive` for small objects and on-disk media cache for lesson assets.
+- Navigation: `go_router` with typed routes and deep-link support.
+- Config: environment via Firebase Remote Config; secrets via App Check + Functions.
+
+3. Database & Schema (Firebase)
+- Auth users collection: uid, email, name, avatar, level, goals, createdAt, lastActive.
+- Profiles: streaks, points, tiers, badges.
+- Lessons: units > lessons > activities (types: speaking, pronunciation, grammar, vocab). Fields: prompts, correct answers, TTS hints, difficulty, tags.
+- Attempts: per-user per-activity attempts with scores (pronunciation, grammar), timestamps, audio refs.
+- Practice queue: recent mistakes surfaced from attempts.
+- League: weekly seasons, tiers, user points, anti-cheat flags.
+- Purchases: entitlement status, productId, platformReceipts, renewal info (mirrored from server validation).
+- Settings: user prefs (tts voice, playback speed, notifications, privacy flags, locale).
+
+4. Authentication
+- Email/password, Google Sign-In. Optional Apple on iOS.
+- Session persistence; re-auth for sensitive ops.
+- Age gate when required; COPPA handling if under 13.
+
+5. Payments / Monetization
+- Products: Monthly, Annual, Lifetime (optional). Intro offers, free trial.
+- Server-side receipt validation via Cloud Functions. Entitlement doc updated on verified purchase.
+- Paywall: shown on gating events (starting conversation after N free uses, end-of-lesson, accessing premium drills). Restore purchases in settings.
+
+5a. Premium vs Free Plan (derived from assets + Loora-style benchmarks)
+- Free tier
+  - 1 Daily Lesson per day (basic steps only)
+  - Limited AI conversations (e.g., 1 session/day or 5 minutes/day) with basic text feedback
+  - Basic practice drills; limited review (recent items only)
+  - Entry league tier only
+  - No offline downloads; single default coach voice
+- Premium tier
+  - Unlimited Daily Lessons and Practice packs (speaking, pronunciation, grammar, vocab)
+  - Unlimited AI voice conversations with advanced feedback (phoneme-level pronunciation, grammar explanations)
+  - Personalized learning plan and goal-based paths
+  - Review hub with complete attempt history + auto-generated re-drills
+  - Coach options: multiple voices/accents/personas
+  - Offline lessons and cached TTS
+  - Full League access (higher tiers, rewards), premium badges
+  - Streak protection (freeze/restore)
+  - Level/course certificates
+  - Priority support
+- SKUs & trials: Monthly, Annual (discounted), optional Lifetime; 7‑day trial + intro pricing
+- Gating moments: after the free Daily Lesson, after free conversation allowance is exceeded, when opening advanced packs, entering higher league tiers, choosing coach personas, enabling offline mode
+
+6. Security & Privacy
+- App Check enabled; Firestore rules per-user; Storage rules for user-owned recordings.
+- PII minimization; data export/delete endpoints; retention policy for audio (default 90 days, configurable).
+- Network: HTTPS strictly; secure webhooks for Play billing notifications.
+
+7. APIs & Integrations
+- Speech-to-Text (STT): Google Cloud Speech-to-Text streaming API (Functions proxy; client uses gRPC/websocket to Functions).
+- Text-to-Speech (TTS): Google Cloud TTS voices; cache generated audio in Storage.
+- AI Feedback: grammar/pronunciation scoring pipeline via Functions (can integrate 3rd-party pronunciation SDK if needed).
+- Notifications: FCM for streaks, lesson reminders, league results.
+
+8. Testing Strategy
+- Unit tests for providers and domain logic.
+- Golden tests for widgets (key screens).
+- Integration tests with `flutter_test` + `integration_test` for auth, onboarding, lesson flow, purchase.
+- Staging environment with emulators (Auth, Firestore, Functions) for CI.
+
+9. Deployment & CI/CD
+- CI: GitHub Actions workflows for lint/test/build; cache pub deps.
+- Release: EAS-equivalent via Fastlane or Codemagic (Android App Bundle). Internal → Closed → Production tracks.
+- Crashlytics + Analytics auto-upload in release builds.
+
+10. User Onboarding Experience (from assets: `onboarding1`)
+- Steps: intro → account → goals → level → notifications → home.
+- Requirements: progress indicator, back/resume, validation, analytics per-step.
+
+11. Home & Daily Lessons (from assets: `home.dailylesson2`)
+- Home shows progress ring, lesson categories (Reading, Listening, Speaking, Grammar), streak CTA.
+- Daily Lesson flow with sub-steps: speaking prompts, pronunciation drill, grammar translate-with-tiles, end summary.
+
+12. Conversation (coach) Experience
+- Real-time session with waveform, mic control, captions, turn-taking.
+- Live feedback overlays; post-session review cards stored to attempts.
+- Latency budget: < 400 ms per turn; prefetch TTS audio.
+
+13. Practice Tab (from assets: `practiceTab3`)
+- Skill tiles; drills sourced from mistakes and configured sets; quick scoring.
+
+14. League (from assets: `Leaguse4`)
+- Weekly tiers; points from lessons/practice; reset cadence; anti-cheat heuristics.
+
+15. Profile, Achievements, Settings (from assets: `WilliamUsername5`)
+- Profile summary, badges with unlock criteria.
+- Settings inventory: notifications, speech options, privacy/export, language, restore purchases, account deletion.
+
+16. Data Migration & Portability
+- Export user data (JSON + media links) on request; delete flow with grace period.
+- Versioned Firestore docs; migration scripts in Functions.
+
+17. Error Handling & User Feedback
+- Standard error surfaces: snackbars/toasts, inline field errors, retry actions, offline banners.
+- Global handler for uncaught exceptions (Crashlytics) with user-visible fallback screen.
+
+18. Performance Monitoring & Analytics
+- Firebase Performance traces around conversation, lesson steps, purchases.
+- Core events: onboarding_step, lesson_start/step/complete, practice_start/complete, conversation_start/end, purchase_*.
+
+19. Regulatory Compliance
+- GDPR/CCPA support (export/delete); terms/privacy screens; COPPA if applicable.
+- Recording consent prompts; storage regions.
+
+20. App Store Guidelines
+- Google Play target SDK current, background mic usage policy compliance, subscriptions disclosures, refund flows.
+
+21. Localization & Internationalization
+- App strings via Flutter Intl; right-to-left support; locale switch in settings.
+- Content locale separation in Firestore; TTS/STT voice selection by locale.
+
+22. Accessibility & Design Quality
+- Follow WCAG 2.1 AA; semantic widgets; large tap targets; captions.
+- UI must follow project rules: see `.cursor/rules/ui_professional.mdc` and `.cursor/rules/cursor_ui_enhancement.mdc`.
+
+23. Risks & Mitigations
+- Latency: edge caching, prefetch; choose closest region; partial on-device inference later.
+- Cost: stream STT/TTS, compress audio, cap session length; Remote Config limits.
+- Abuse: rate limiting, league anti-cheat, moderated user-generated prompts.
+
+24. Open Questions
+- Final paywall copy and gating rules; SKUs & pricing.
+- Final vendor choice for pronunciation scoring (if external SDK preferred).
+- Coach personalities and accents scope at launch.
+
+25. IP Compliance & Differentiation (Non-infringing Policy)
+- Do not reuse Loora branding, logos, illustrations, proprietary copy, or distinctive layouts.
+- Follow common UX patterns only; implement our own layout grid, icon set, and wording.
+- Generate original lesson prompts, conversation lines, and grammar examples.
+- Replace all research screenshots/videos with our own assets during build; these assets are for analysis only.
+- Maintain a design-differentiation checklist per screen (palette, spacing, component shapes) to ensure distinct look.
+- Keep provenance notes for content creation; store in `docs/content-provenance/`.
+
+26. UI Component Inventory & Behaviors (all must be implemented)
+- Global Navigation
+  - Tab bar: Home, Practice, League, Account. States: active/inactive; unread/badge dot optional. A11y labels and roles for tabs.
+  - Top app bar: screen title, optional actions (help, settings), back affordance on sub-screens.
+  - Progress indicators: circular (lesson ring), linear (stepper); determinate/indeterminate variants.
+- Primary Controls
+  - Primary button (filled), Secondary (tonal), Tertiary (text). Loading/disabled states; min tap target 48x48dp.
+  - Icon buttons: sizes 24/32dp; toggled and disabled states; tooltip/a11y label.
+  - Bottom sheets, dialogs (confirm, error), snackbars/toasts (success/error/info) with timeouts and actions.
+- Conversation (Coach)
+  - Mic button: states idle/recording/permission-denied/network-offline; long-press to hold-to-talk (configurable); tap-to-toggle.
+  - Waveform visualizer (recording and playback); live caption line; “Thinking…” indicator while generating.
+  - TTS controls: play/pause, replay, speed selector (0.75/1.0/1.25), voice/accent picker (premium unlock).
+  - Session controls: next, end session, report issue; timer and token/min limit banner for free users.
+- Pronunciation Drill
+  - Prompt phrase chip; play/pause; slow playback; record; score meter (0–100) with color bands.
+  - Error highlights (phoneme or word), retry, “show tips” panel; next/previous phrase.
+- Grammar (Tiles)
+  - Word-bank chips (scrollable); answer area with drag or tap-to-add; backspace/clear; “Check it” CTA.
+  - Result panel: correct/incorrect; explanation block; “Try again” and “Next”.
+- Lesson Shell
+  - Stepper bar with step icons; skip (if allowed), pause, exit confirmation dialog.
+  - Streak badge, daily goal meter; premium gate banner on exceeding free quota.
+- Practice Tab
+  - Skill filters (pronunciation/grammar/vocab/speaking); drill cards with difficulty tags; start CTA.
+  - Drill result card with score, continue/redo, add-to-review toggle.
+- League
+  - Tier card (bronze/silver/gold…); points progress bar; weekly reset timer; “Claim reward” button; rules link.
+- Profile & Achievements
+  - Avatar edit; name field; badges grid with locked/unlocked; share badge action.
+  - Settings entry: shortcut chips for common actions (notifications, voice, language).
+- Settings
+  - Notification toggles (lesson reminders, streaks); speech rate slider; voice picker; language selector (i18n).
+  - Restore purchases; manage subscription; privacy: export data, delete account (2-step confirm).
+- Paywall
+  - Plan cards (Monthly/Annual/Lifetime), trial badge, feature checklist; CTA purchase; “Restore purchases”; links to Terms/Privacy; dismiss/back.
+- Review/History
+  - Mistake cards list (from attempts); filter by skill/date; start re-drill; share/export.
+- Offline/Errors
+  - Offline banner with retry; permission prompts (mic/notifications); global error fallback with restart.
+- Analytics IDs (prefix “ux.”)
+  - ux.tap.mic, ux.tap.play, ux.check.grammar, ux.complete.lesson, ux.open.paywall, ux.purchase.success, ux.restore.success, ux.tap.league.claim, etc.
+
+27. Screen Specs & Required Controls (acceptance criteria)
+- Onboarding
+  - Required controls: Begin button; 6-step wizard: Goal chips, Level chips, Schedule pickers, Notifications allow/deny, Mic permission CTA, Locale selector; Back/Next; Step indicator; Skip (configurable).
+  - AC: step progress saved/resumable; analytics per step; validation messages; accessible labels.
+- Home
+  - Controls: progress ring; lesson category cards (Reading/Listening/Speaking/Grammar) with completion bars; Start Daily Lesson CTA; streak indicator; quick actions (Practice, Review).
+  - AC: cards navigate correctly; gated CTAs surface paywall when over quota.
+- Conversation Screen
+  - Controls: chat bubbles; mic; TTS controls; captions; next/end; report.
+  - AC: latency budget met; disabled states on permission/network issues; transcripts written to attempts.
+- Pronunciation Screen
+  - Controls: phrase chip; play/slow; record; score meter; tips; retry; next.
+  - AC: score recorded; retry resets meter; a11y for controls.
+- Grammar Screen
+  - Controls: word bank; answer area; clear; check; explanation; next.
+  - AC: correct solution accepted; partials show hints; tiles usable via tap and drag; keyboard support.
+- Practice Screen
+  - Controls: filters; drill cards; start; result card; add-to-review.
+  - AC: drill loop works offline for cached sets; events logged.
+- League Screen
+  - Controls: tier card; progress; rules; claim reward.
+  - AC: weekly reset clock; claim updates inventory and logs analytics.
+- Profile/Achievements
+  - Controls: avatar edit; name; badges grid; share.
+  - AC: profile saves; badges reflect server state.
+- Settings
+  - Controls: toggles, sliders, pickers; restore; manage subscription; export; delete.
+  - AC: restore triggers entitlement check; export produces file/download link; delete requires 2-step confirm.
+- Paywall
+  - Controls: plan selection; trial; purchase CTA; restore; terms/privacy links.
+  - AC: server-side receipt validation; entitlement reflected in app immediately.
+
+28. Visual Specs Hooks
+- All controls inherit design tokens from theme (colors/typography/spacing/radii/elevation). Use rules under `.cursor/rules/` to enforce professional UI.
+- Assets from research are not used in production; new assets will be created respecting our palette and iconography.
+
+29. Layout Blueprints (screen-by-screen placement)
+- Global grid & anchors
+  - Grid: 8dp base spacing; safe areas respected; bottom navigation fixed; content max-width 600dp in portrait.
+  - Anchors per screen: Top App Bar, Content Area, Footer Bar (sticky), FAB Zone (center-bottom), Bottom Sheet Zone.
+  - Primary CTA placement: footer bar; secondary actions near associated content; destructive actions in overflow or confirm dialog.
+- Onboarding
+  - Top App Bar: back (except first step), title = current step.
+  - Content: step wizard (goal chips/level chips/forms) centered with progress indicator below title.
+  - Footer Bar: Next/Back; Skip (if enabled) left-aligned; CTA right-aligned.
+- Home
+  - Top App Bar: app name/logo optional; settings/help actions.
+  - Content: progress ring at top; category cards in 2-column grid; streak chip below.
+  - Footer Bar: Start Daily Lesson CTA (visible when available); bottom navigation fixed.
+- Conversation (Coach)
+  - Top App Bar: End session (left), report (overflow right).
+  - Content: message list (coach/user bubbles); TTS controls under most recent coach bubble; captions overlay.
+  - FAB Zone: mic button centered above bottom nav; limit banner sits between FAB and nav when applicable.
+  - Bottom Sheet Zone: tips/help when expanded.
+- Pronunciation
+  - Top: phrase chip and progress count.
+  - Content: playback controls row (play/slow) above record button; score meter below; error highlights inline with phrase.
+  - Footer Bar: Prev / Next; Retry appears inline near meter; Tips opens as bottom sheet.
+- Grammar (Tiles)
+  - Top: prompt text and progress.
+  - Content: answer area (drop/tap targets) centered; feedback/explanation appears below on check.
+  - Bottom Sheet Zone: word-bank chips docked; Footer Bar: Check CTA sticky above sheet; Clear on the left.
+- Practice
+  - Top: filter chips row; search optional.
+  - Content: drill cards list; each with Start CTA; difficulty tag.
+  - Footer Bar: none (navigation via cards); bottom nav fixed.
+- League
+  - Top: tier card; weekly reset timer.
+  - Content: progress bar, rewards list, rules link.
+  - Footer Bar: Claim Reward CTA when available.
+- Profile / Achievements
+  - Top: profile header (avatar/name/points/streak) with edit.
+  - Content: achievements grid; share in card overflow; settings entry at bottom.
+  - Footer Bar: none.
+- Settings
+  - Top: title only.
+  - Content: sectioned list (Notifications, Speech, Language, Subscription, Privacy).
+  - Footer Bar: destructive actions (delete account) require 2-step confirm dialog.
+- Paywall
+  - Top: close/back; title.
+  - Content: plan cards vertically stacked; feature checklist; trial badge.
+  - Footer Bar: Purchase CTA sticky; Restore link left; Terms/Privacy links inline.
+- Review/History
+  - Top: filters (skill/date).
+  - Content: mistake cards list; tapping opens detail; Start Re-drill button in card.
+  - Footer Bar: none.
+
+30. Golden Test Targets (layout verification)
+- For each screen, snapshot tests verify presence and placement of: top app bar, primary CTA in footer, FAB mic (conversation), bottom sheet (tiles), and progress components.
+
+Appendix A. Asset Index
+- Root: `research/loora/loora AI/`
+- Onboarding (`onboarding1`): 1 video, 20+ screenshots
+- Home + Daily Lesson (`home.dailylesson2`): multiple videos (lesson, pronunciation, grammar) and 30+ screenshots
+- Practice (`practiceTab3`): 1 video, 8+ screenshots
+- League (`Leaguse4`): 1 video, 1 screenshot
+- Account/Settings/Achievements (`WilliamUsername5`): 1 video, 20+ screenshots (including settings subfolder)
+- Full file list with paths: see `research/loora/assets-manifest.txt`
+
+Appendix A.1 Asset-derived Flow Details
+- Onboarding (`onboarding1`)
+  - Video: `onboarding Loora AI.mp4` shows: intro value props → account → goals/level → permissions/notifications → home entry
+  - Screens: `Screenshot_2025...` series confirm stepper with back/resume and selection grids
+- Home & Daily Lesson (`home.dailylesson2`)
+  - Videos: `daily lessons*.mp4` show lesson composition: speaking → pronunciation → grammar (translate with tiles) → summary
+  - Screens: multiple `Screenshot_2025...` confirm progress ring, Reading/Listening/Speaking/Grammar cards, end-of-lesson summary
+- Practice (`practiceTab3`)
+  - Video: `practice tab.mp4`; Screens: show practice tiles and drill start → scoring
+- League (`Leaguse4`)
+  - Video: `league tab.mp4`; Screen: `Screenshot_20250812-135113.png` displays tier progress UI
+- Account/Settings/Achievements (`WilliamUsername5`)
+  - Video: `username_William tab.mp4`; Screens: achievements folder and extensive settings (`Settings.william(username)`), including restore purchases
+
+Appendix A.2 Video-to-Transcript/Stills Map
+- Appendix A.3 Detailed Notes Extracted
+- Onboarding
+  - Voice prompt confirms 6 onboarding questions before starting speaking (file: onboarding1/onboarding Loora AI.mp4).
+  - Copy tone: friendly coach introduction (“Pleasure to meet you… your AI English tutor”).
+- Daily Lesson: Overview/Conversation
+  - Coach invites quick talk to warm up; conversation bubbles with mic control (file: home.dailylesson2/overview of buttons in speach bubbles daily lesson.mp4).
+  - Speaking prompts reference user name (“William”) and ask open questions.
+- Daily Lesson: Pronunciation
+  - Pronunciation step follows conversation; likely per-phrase playback + record + score loop (file: home.dailylesson2/pronunciation .mp4).
+  - Transcript suggests contextual follow-ups; ensure scoring rubric and retry.
+- League
+  - Transcript minimal; use UI screenshots + video to implement tier + weekly reset, with points from lessons/practice (file: Leaguse4/league tab.mp4).
+- home.dailylesson2/daily lessons .mp4
+  - Stills: research/loora/stills/home.dailylesson2/daily lessons /
+  - Transcript: .taskmaster/docs/transcripts/home.dailylesson2/daily lessons .txt
+- home.dailylesson2/daily lessons continued.mp4
+  - Stills: research/loora/stills/home.dailylesson2/daily lessons continued
+  - Transcript: .taskmaster/docs/transcripts/home.dailylesson2/daily lessons continued.txt
+- home.dailylesson2/daily lessons grammer.mp4
+  - Stills: research/loora/stills/home.dailylesson2/daily lessons grammer
+  - Transcript: .taskmaster/docs/transcripts/home.dailylesson2/daily lessons grammer.txt
+- home.dailylesson2/daily lessons pronunciation .mp4
+  - Stills: research/loora/stills/home.dailylesson2/daily lessons pronunciation 
+  - Transcript: .taskmaster/docs/transcripts/home.dailylesson2/daily lessons pronunciation .txt
+- home.dailylesson2/daily lessons_honescreen start.mp4
+  - Stills: research/loora/stills/home.dailylesson2/daily lessons_honescreen start
+  - Transcript: .taskmaster/docs/transcripts/home.dailylesson2/daily lessons_honescreen start.txt
+- home.dailylesson2/end of daily lesson.mp4
+  - Stills: research/loora/stills/home.dailylesson2/end of daily lesson
+  - Transcript: .taskmaster/docs/transcripts/home.dailylesson2/end of daily lesson.txt
+- home.dailylesson2/overview of buttons in speach bubbles daily lesson.mp4
+  - Stills: research/loora/stills/home.dailylesson2/overview of buttons in speach bubbles daily lesson
+  - Transcript: .taskmaster/docs/transcripts/home.dailylesson2/overview of buttons in speach bubbles daily lesson.txt
+- home.dailylesson2/pronunciation .mp4
+  - Stills: research/loora/stills/home.dailylesson2/pronunciation 
+  - Transcript: .taskmaster/docs/transcripts/home.dailylesson2/pronunciation .txt
+- home.dailylesson2/second Grammer .mp4
+  - Stills: research/loora/stills/home.dailylesson2/second Grammer 
+  - Transcript: .taskmaster/docs/transcripts/home.dailylesson2/second Grammer .txt
+- Leaguse4/league tab.mp4
+  - Stills: research/loora/stills/Leaguse4/league tab
+  - Transcript: .taskmaster/docs/transcripts/Leaguse4/league tab.txt
+- onboarding1/onboarding Loora AI.mp4
+  - Stills: research/loora/stills/onboarding1/onboarding Loora AI
+  - Transcript: .taskmaster/docs/transcripts/onboarding1/onboarding Loora AI.txt
+- practiceTab3/practice tab.mp4
+  - Stills: research/loora/stills/practiceTab3/practice tab
+  - Transcript: .taskmaster/docs/transcripts/practiceTab3/practice tab.txt
+- WilliamUsername5/username_William tab.mp4
+  - Stills: research/loora/stills/WilliamUsername5/username_William tab
+  - Transcript: .taskmaster/docs/transcripts/WilliamUsername5/username_William tab.txt
+
+Appendix A.4 Step-by-Step Flows per Video (abstracted, original wording)
+- onboarding1/onboarding Loora AI.mp4
+  1) Coach intro → begin setup
+  2) Six-question wizard (goal, level, schedule, notifications, mic permission, locale)
+  3) Complete → Home
+
+- home.dailylesson2/daily lessons_honescreen start.mp4
+  1) Home card → Start Daily Lesson
+  2) Lesson overview with topic and time estimate
+  3) Enter conversation warm-up
+
+- home.dailylesson2/overview of buttons in speach bubbles daily lesson.mp4
+  1) Chat bubble UI with mic button and tips
+  2) User speaks; captions + coach response
+  3) Advance to pronunciation
+
+- home.dailylesson2/pronunciation .mp4
+  1) Phrase preview → play → record
+  2) Score with hints; allow retry
+  3) Continue to grammar
+
+- home.dailylesson2/daily lessons grammer.mp4
+  1) Word-bank translate UI
+  2) Check → feedback (correct/incorrect + explanation)
+  3) Advance
+
+- home.dailylesson2/daily lessons continued.mp4
+  1) Additional speaking prompt(s)
+  2) Mistake cards queued for Review
+  3) Progress bar updates
+
+- home.dailylesson2/second Grammer .mp4
+  1) Alternate grammar interaction (fill/reorder)
+  2) Timed check; show hint on retry
+  3) End-of-lesson summary
+
+- home.dailylesson2/end of daily lesson.mp4
+  1) Summary: scores by skill, streak, points
+  2) Recommendations: practice from mistakes
+  3) Premium gate for more lessons/practice
+
+- practiceTab3/practice tab.mp4
+  1) Pick skill → drill set
+  2) Prompt → answer → instant score loop
+  3) Completion: streak/points; suggest next
+
+- Leaguse4/league tab.mp4
+  1) Tier view with progress
+  2) Weekly reset + rewards
+  3) Rules link (fair play)
+
+- WilliamUsername5/username_William tab.mp4
+  1) Profile header (points, streak)
+  2) Achievements grid
+  3) Settings (purchases, privacy, speech)
+
+Appendix B. Sample Firestore Security Rules (high-level intent)
+- Users can read/update their own profile and attempts; cannot read others.
+- Lesson content readable; write restricted to admins.
+- Purchases write-only from Functions; clients read entitlement state.
+
+Appendix C. Telemetry Event Dictionary (initial)
+- onboarding_step, home_view, lesson_start, lesson_step, lesson_complete, practice_start, practice_complete,
+  convo_start, convo_turn, convo_end, purchase_start, purchase_success, purchase_restore, paywall_view.
+
+Appendix D. Visual/Branding Guidelines
+- Color palette and typography to be finalized; must meet rules in `.cursor/rules` and match the provided style inspiration.
+
+

@@ -1,0 +1,26 @@
+{
+  "name": "fluentflow",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "taskmaster:init": "npx -y task-master init",
+    "taskmaster:list": "npx -y task-master list",
+    "taskmaster:next": "npx -y task-master next",
+    "taskmaster:parse": "npx -y task-master parse-prd .taskmaster/docs/prd.txt",
+    "taskmaster:generate": "npx -y task-master generate",
+    "assets:process": "node scripts/process-assets.mjs"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "task-master-ai": "^0.24.0"
+  },
+  "dependencies": {
+    "ffmpeg-static": "^5.2.0",
+    "form-data": "^4.0.4",
+    "node-fetch": "^3.3.2"
+  }
+}

@@ -1,0 +1,20 @@
+# Task ID: 7
+# Title: Develop Review and Practice System
+# Status: pending
+# Dependencies: 5, 6
+# Priority: medium
+# Description: Create the review system that allows users to revisit mistakes, practice with flashcards, and complete targeted drills based on their performance.
+# Details:
+1. Implement mistake tracking and categorization
+2. Create spaced repetition algorithm for review scheduling
+3. Design and implement flashcard system
+4. Develop targeted drill generation based on user weaknesses
+5. Create UI for review dashboard
+6. Implement progress tracking for review items
+7. Add audio recording playback for pronunciation mistakes
+8. Create comparison views between correct and user pronunciations
+9. Implement streak system for consistent review
+10. Add export functionality for review materials
+
+# Test Strategy:
+Algorithm testing for spaced repetition logic. Unit tests for drill generation. Integration tests for the complete review flow. User testing to validate effectiveness of review materials. Performance testing for audio playback and recording.

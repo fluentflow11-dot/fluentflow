@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "969518297113",
+    "project_id": "fluentflow-dbb83",
+    "storage_bucket": "fluentflow-dbb83.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:969518297113:android:ba09811d717f1a8cedba88",
+        "android_client_info": {
+          "package_name": "com.fluentflow.fluentflow_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAvLNGlJ8Gl16Y-Xx1vD-Du5HYpYzKJzeM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

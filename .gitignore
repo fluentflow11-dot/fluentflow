@@ -1,0 +1,35 @@
+node_modules/
+.env
+.DS_Store
+*.log
+.cursor/
+.taskmaster/cache/
+research/loora/**/*.mp4
+research/loora/**/*.mov
+research/loora/**/*.png
+research/loora/**/*.jpg
+research/loora/**/*.jpeg
+
+
+
+# Logs
+logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+dev-debug.log
+# Dependency directories
+# Environment variables
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+# OS specific
+
+# Task files
+# tasks.json
+# tasks/ 

@@ -1,0 +1,20 @@
+# Task ID: 6
+# Title: Design and Implement Lesson Path System
+# Status: pending
+# Dependencies: 3
+# Priority: medium
+# Description: Create the curriculum structure with units, lessons, and activities that form personalized learning paths for users based on their level and goals.
+# Details:
+1. Design database schema for curriculum content (units → lessons → activities)
+2. Create content management system for lessons
+3. Implement activity types: dialogue, roleplay, shadowing, repeat-after-me, corrections
+4. Develop progression logic between lessons
+5. Create UI for lesson selection and navigation
+6. Implement lesson completion tracking
+7. Add prerequisite checking for advanced lessons
+8. Create content for levels A1-C1 covering daily life, business, and travel topics
+9. Implement difficulty scaling based on user performance
+10. Add bookmarking and favoriting functionality
+
+# Test Strategy:
+Content validation for educational accuracy. Unit tests for progression logic. Integration tests for lesson completion and unlocking. User testing with different personas to validate appropriate difficulty. Performance testing for content loading times.

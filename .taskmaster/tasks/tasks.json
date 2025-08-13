@@ -1,0 +1,1325 @@
+{
+  "master": {
+    "tasks": [
+      {
+        "id": 21,
+        "title": "Setup Flutter Project with Firebase Integration",
+        "description": "Initialize a new Flutter project with the required dependencies and configure Firebase services for the FluentFlow app.",
+        "details": "1. Create a new Flutter project using the stable LTS channel\n2. Configure project structure following clean architecture with feature modules\n3. Set up Firebase project and register Android/iOS apps\n4. Integrate Firebase SDKs: Auth, Firestore, Storage, Functions, Remote Config, Crashlytics, Analytics, App Check, Cloud Messaging, In-App Messaging\n5. Configure environment variables and secrets management\n6. Set up CI/CD pipeline with GitHub Actions for lint/test/build\n7. Implement state management using Riverpod with Freezed for immutable models\n8. Configure go_router for navigation with typed routes and deep-link support\n9. Set up Hive for local caching\n10. Initialize Material 3 theming with custom design tokens",
+        "testStrategy": "1. Verify Firebase services connection with test credentials\n2. Run integration tests to confirm project structure and architecture\n3. Test navigation routes and deep links\n4. Verify CI/CD pipeline with sample commits\n5. Test offline caching with Hive",
+        "priority": "high",
+        "dependencies": [],
+        "status": "in-progress",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create a new Flutter project with proper structure",
+            "description": "Initialize a new Flutter project using Flutter's stable LTS channel and set up the basic project structure following clean architecture principles.",
+            "dependencies": [],
+            "details": "Run 'flutter create --org com.fluentflow fluentflow' to create the project. Organize the project structure with lib/ containing: /core (for base classes), /features (for feature modules), /shared (for shared widgets), and /utils (for utilities). Set up pubspec.yaml with initial dependencies and configure analysis_options.yaml for linting.",
+            "status": "done",
+            "testStrategy": "Verify project structure matches clean architecture guidelines. Run 'flutter analyze' to ensure no linting issues."
+          },
+          {
+            "id": 2,
+            "title": "Configure project dependencies and state management",
+            "description": "Add and configure essential dependencies for the project including Riverpod for state management, Freezed for immutable models, and go_router for navigation.",
+            "dependencies": [
+              "21.1"
+            ],
+            "details": "Update pubspec.yaml to include: flutter_riverpod, freezed, freezed_annotation, build_runner, go_router, hive, hive_flutter. Create provider containers and configure Riverpod. Set up Freezed code generation for models. Create initial route configuration with go_router including typed routes and deep-link support.",
+            "status": "done",
+            "testStrategy": "Run 'flutter pub get' and verify all dependencies are correctly installed. Test basic state management with a simple counter example."
+          },
+          {
+            "id": 3,
+            "title": "Set up Material 3 theming and design tokens",
+            "description": "Configure the app's visual appearance using Material 3 theming with custom design tokens for consistent styling across the application.",
+            "dependencies": [
+              "21.1"
+            ],
+            "details": "Create a theme.dart file with light and dark ThemeData configurations. Define custom color schemes, text styles, and other design tokens. Implement a theme provider using Riverpod to manage theme state. Create a theme_extensions.dart file for custom theme extensions.",
+            "status": "done",
+            "testStrategy": "Create widget tests to verify theme application. Test theme switching between light and dark modes."
+          },
+          {
+            "id": 4,
+            "title": "Create Firebase project and register apps",
+            "description": "Set up a new Firebase project and register both Android and iOS applications with the necessary configuration files.",
+            "dependencies": [
+              "21.1"
+            ],
+            "details": "Create a new Firebase project in the Firebase console. Register Android app with package name and download google-services.json. Register iOS app with bundle ID and download GoogleService-Info.plist. Configure build.gradle files for Android and add required configurations to iOS project.",
+            "status": "done",
+            "testStrategy": "Verify Firebase console shows both apps registered correctly. Ensure configuration files are placed in the correct locations."
+          },
+          {
+            "id": 5,
+            "title": "Integrate Firebase Core and Authentication",
+            "description": "Add Firebase Core SDK and Authentication to the Flutter project and configure basic authentication functionality.",
+            "dependencies": [
+              "21.2",
+              "21.4"
+            ],
+            "details": "Add firebase_core and firebase_auth dependencies to pubspec.yaml. Initialize Firebase in main.dart with Firebase.initializeApp(). Create an AuthRepository class to handle authentication operations. Implement basic sign-in and sign-out methods.",
+            "status": "done",
+            "testStrategy": "Test Firebase initialization. Verify connection to Firebase Authentication with test credentials."
+          },
+          {
+            "id": 6,
+            "title": "Integrate Firestore and Storage",
+            "description": "Add and configure Firebase Firestore for database operations and Firebase Storage for file storage.",
+            "dependencies": [
+              "21.5"
+            ],
+            "details": "Add cloud_firestore and firebase_storage dependencies. Create repository classes for Firestore and Storage operations. Implement basic CRUD operations for Firestore. Set up Storage upload and download functionality. Configure initial Firestore security rules.",
+            "status": "done",
+            "testStrategy": "Test basic Firestore operations (create, read, update, delete). Verify file upload and download with Storage."
+          },
+          {
+            "id": 7,
+            "title": "Integrate remaining Firebase services",
+            "description": "Add and configure additional Firebase services: Functions, Remote Config, Crashlytics, Analytics, App Check, Cloud Messaging, and In-App Messaging.",
+            "dependencies": [
+              "21.6"
+            ],
+            "details": "Add dependencies for cloud_functions, firebase_remote_config, firebase_crashlytics, firebase_analytics, firebase_app_check, firebase_messaging, and firebase_in_app_messaging. Initialize each service in the app. Create service wrapper classes for each Firebase service. Configure basic functionality for each service.",
+            "status": "done",
+            "testStrategy": "Verify initialization of each Firebase service. Test basic functionality like receiving remote config values and logging analytics events."
+          },
+          {
+            "id": 8,
+            "title": "Set up Hive for local caching",
+            "description": "Implement Hive as the local database solution for offline caching and data persistence.",
+            "dependencies": [
+              "21.2"
+            ],
+            "details": "Initialize Hive in main.dart with Hive.initFlutter(). Create adapter classes for model objects that need to be cached. Register adapters and open boxes for different data types. Implement repository methods that use Hive for caching and offline support.",
+            "status": "done",
+            "testStrategy": "Test Hive initialization and box creation. Verify data persistence across app restarts. Test offline functionality by disabling network connectivity."
+          },
+          {
+            "id": 9,
+            "title": "Configure environment variables and secrets management",
+            "description": "Set up a system to manage environment variables and secrets securely across different build environments.",
+            "dependencies": [
+              "21.5"
+            ],
+            "details": "Create a .env file for local development (add to .gitignore). Implement flutter_dotenv or envied package for environment variable management. Set up different configurations for development, staging, and production environments. Create a secure mechanism for storing API keys and secrets.",
+            "status": "done",
+            "testStrategy": "Verify environment variables are correctly loaded in different build environments. Ensure secrets are not exposed in the repository."
+          },
+          {
+            "id": 10,
+            "title": "Implement error handling and logging",
+            "description": "Create a comprehensive error handling and logging system to capture and report issues.",
+            "dependencies": [
+              "21.7"
+            ],
+            "details": "Create an ErrorHandler class to centralize error handling. Integrate with Firebase Crashlytics for crash reporting. Implement custom logging with different log levels. Add global error boundaries for UI components. Create user-friendly error messages and recovery options.",
+            "status": "done",
+            "testStrategy": "Test error handling with simulated errors. Verify crashes are correctly reported to Crashlytics. Test recovery mechanisms from different error states."
+          },
+          {
+            "id": 11,
+            "title": "Set up CI/CD pipeline with GitHub Actions",
+            "description": "Configure a continuous integration and continuous deployment pipeline using GitHub Actions for automated testing and building.",
+            "dependencies": [
+              "21.1",
+              "21.4"
+            ],
+            "details": "Create .github/workflows directory with YAML configuration files. Set up workflows for: lint and code analysis, running tests, building Android and iOS apps. Configure caching for dependencies and build artifacts. Set up secrets in GitHub repository for sensitive information. Configure Firebase App Distribution for beta releases.",
+            "status": "done",
+            "testStrategy": "Test the CI/CD pipeline with test commits. Verify successful builds and test runs. Test deployment to Firebase App Distribution."
+          },
+          {
+            "id": 12,
+            "title": "Create comprehensive documentation",
+            "description": "Document the project setup, architecture, and development guidelines for the team.",
+            "dependencies": [
+              "21.1",
+              "21.2",
+              "21.3",
+              "21.4",
+              "21.5",
+              "21.6",
+              "21.7",
+              "21.8",
+              "21.9",
+              "21.10",
+              "21.11"
+            ],
+            "details": "Create a README.md with project overview and setup instructions. Document the architecture and design patterns used. Create API documentation for key services and repositories. Document Firebase configuration and environment setup. Create contribution guidelines for the team. Add inline code documentation for complex functions.",
+            "status": "pending",
+            "testStrategy": "Review documentation for completeness and accuracy. Verify a new team member can set up the project following the documentation."
+          }
+        ]
+      },
+      {
+        "id": 22,
+        "title": "Implement Authentication System",
+        "description": "Build the authentication system with email/password and social sign-in options, including session management and age verification.",
+        "details": "1. Implement Firebase Authentication with email/password login\n2. Add Google Sign-In integration (primary)\n3. Add Apple Sign-In for iOS (secondary)\n4. Create user profile creation flow\n5. Implement session persistence and token refresh\n6. Add re-authentication for sensitive operations\n7. Implement age gate verification and COPPA handling for users under 13\n8. Create secure Firestore rules for user authentication\n9. Implement account recovery and password reset\n10. Add analytics events for authentication flows",
+        "testStrategy": "1. Unit tests for authentication providers\n2. Integration tests for sign-up, sign-in, and sign-out flows\n3. Test age verification logic\n4. Verify session persistence across app restarts\n5. Test security rules with Firebase emulator",
+        "priority": "high",
+        "dependencies": [
+          21
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Set up Firebase Authentication in the project",
+            "description": "Initialize Firebase in the application and configure the Firebase Authentication module with the necessary dependencies and configuration.",
+            "dependencies": [],
+            "details": "1. Add Firebase dependencies to pubspec.yaml\n2. Create a firebase_options.dart file using FlutterFire CLI\n3. Initialize Firebase in main.dart\n4. Configure Firebase Authentication in the app\n5. Set up an AuthService class as a singleton to handle authentication operations\n6. Implement basic error handling for authentication failures",
+            "status": "pending",
+            "testStrategy": "Create unit tests for AuthService initialization and mock Firebase Authentication"
+          },
+          {
+            "id": 2,
+            "title": "Implement email/password authentication",
+            "description": "Create the UI and logic for user registration and login using email and password authentication method.",
+            "dependencies": [
+              "22.1"
+            ],
+            "details": "1. Create registration screen with email, password, and confirm password fields\n2. Implement form validation for email format and password strength\n3. Add createUserWithEmailAndPassword Firebase method in AuthService\n4. Create login screen with email and password fields\n5. Implement signInWithEmailAndPassword Firebase method in AuthService\n6. Add loading states during authentication processes\n7. Implement proper error handling and user feedback",
+            "status": "pending",
+            "testStrategy": "Unit test email validation and password strength checks. Integration tests for the registration and login flows."
+          },
+          {
+            "id": 3,
+            "title": "Implement Google Sign-In integration",
+            "description": "Add the ability for users to sign in using their Google accounts across both Android and iOS platforms.",
+            "dependencies": [
+              "22.1"
+            ],
+            "details": "1. Add google_sign_in package to pubspec.yaml\n2. Configure Google Sign-In in Firebase console\n3. Set up OAuth client IDs in Google Cloud Console\n4. Add necessary configurations to Android (google-services.json) and iOS (GoogleService-Info.plist) projects\n5. Implement signInWithGoogle method in AuthService\n6. Create UI components for Google Sign-In button\n7. Handle account linking if email already exists",
+            "status": "pending",
+            "testStrategy": "Test Google Sign-In flow with test accounts. Verify proper error handling when network issues occur."
+          },
+          {
+            "id": 4,
+            "title": "Implement Apple Sign-In for iOS",
+            "description": "Add Apple Sign-In capability for iOS devices to comply with App Store requirements.",
+            "dependencies": [
+              "22.1"
+            ],
+            "details": "1. Add sign_in_with_apple package to pubspec.yaml\n2. Configure Apple Sign-In capability in Xcode\n3. Set up Apple Developer account with Sign in with Apple enabled\n4. Create Apple Sign-In button that only appears on iOS devices\n5. Implement signInWithApple method in AuthService\n6. Handle account linking if email already exists\n7. Ensure proper error handling for Apple authentication failures",
+            "status": "pending",
+            "testStrategy": "Test Apple Sign-In on physical iOS devices. Verify the button is hidden on Android devices."
+          },
+          {
+            "id": 5,
+            "title": "Create user profile creation flow",
+            "description": "Implement the flow for collecting additional user information after initial authentication to create a complete user profile.",
+            "dependencies": [
+              "22.2",
+              "22.3",
+              "22.4"
+            ],
+            "details": "1. Create a UserProfile model class\n2. Design and implement profile creation screen\n3. Add fields for name, age/birthdate, profile picture, and preferences\n4. Implement Firestore integration to store user profile data\n5. Create a ProfileService to handle profile operations\n6. Add validation for required fields\n7. Implement profile picture upload to Firebase Storage\n8. Add progress indicator during profile creation",
+            "status": "pending",
+            "testStrategy": "Test profile creation with various input combinations. Verify data is correctly stored in Firestore."
+          },
+          {
+            "id": 6,
+            "title": "Implement session persistence and token refresh",
+            "description": "Ensure user sessions persist across app restarts and implement token refresh mechanism to maintain authentication state.",
+            "dependencies": [
+              "22.2",
+              "22.3",
+              "22.4"
+            ],
+            "details": "1. Configure Firebase Auth persistence settings\n2. Implement a token refresh mechanism using Firebase's tokenChanges stream\n3. Create an authentication state listener in the app\n4. Implement secure token storage using flutter_secure_storage\n5. Add auto-login functionality on app start\n6. Handle expired tokens and silent refresh\n7. Create a user session timeout for security (optional)\n8. Implement proper error handling for token refresh failures",
+            "status": "pending",
+            "testStrategy": "Test session persistence across app restarts. Verify token refresh works correctly when tokens expire."
+          },
+          {
+            "id": 7,
+            "title": "Implement age gate verification and COPPA handling",
+            "description": "Create an age verification system to comply with COPPA regulations for users under 13 years old.",
+            "dependencies": [
+              "22.5"
+            ],
+            "details": "1. Design and implement an age gate screen shown before authentication\n2. Create birthdate input with appropriate validation\n3. Implement logic to determine if user is under 13\n4. For users under 13, implement parental consent flow\n5. Store age verification status in user profile\n6. Implement feature restrictions for underage users\n7. Add privacy policy acknowledgment for all users\n8. Create admin dashboard for parental consent verification (if needed)",
+            "status": "pending",
+            "testStrategy": "Test age verification with various birthdates. Verify COPPA restrictions are properly applied for underage users."
+          },
+          {
+            "id": 8,
+            "title": "Implement account recovery and password reset",
+            "description": "Create the functionality for users to recover their accounts and reset passwords when forgotten.",
+            "dependencies": [
+              "22.2"
+            ],
+            "details": "1. Design and implement password reset screen\n2. Add sendPasswordResetEmail method to AuthService\n3. Create email verification flow for new accounts\n4. Implement email verification status checking\n5. Add UI for resending verification emails\n6. Create account recovery flow for locked accounts\n7. Implement proper error handling and user feedback\n8. Add rate limiting for password reset attempts for security",
+            "status": "pending",
+            "testStrategy": "Test password reset flow end-to-end. Verify email verification works correctly."
+          },
+          {
+            "id": 9,
+            "title": "Create secure Firestore rules for user authentication",
+            "description": "Implement security rules in Firestore to ensure user data is protected and only accessible to authorized users.",
+            "dependencies": [
+              "22.5",
+              "22.6"
+            ],
+            "details": "1. Design security rules structure for user profiles and data\n2. Implement rules that restrict access to user's own data\n3. Create admin role with special permissions\n4. Test rules using Firebase emulator\n5. Implement rules for shared resources\n6. Add validation rules to ensure data integrity\n7. Create documentation for security rules\n8. Deploy rules to production environment",
+            "status": "pending",
+            "testStrategy": "Test security rules using Firebase emulator. Verify unauthorized access is properly blocked."
+          },
+          {
+            "id": 10,
+            "title": "Add analytics events for authentication flows",
+            "description": "Implement analytics tracking for all authentication-related events to monitor user behavior and identify potential issues.",
+            "dependencies": [
+              "22.2",
+              "22.3",
+              "22.4",
+              "22.8"
+            ],
+            "details": "1. Configure Firebase Analytics in the app\n2. Define key authentication events to track\n3. Implement analytics logging for sign-up, sign-in, and sign-out events\n4. Add tracking for authentication errors and failures\n5. Implement conversion tracking for completed registrations\n6. Create custom parameters for authentication methods used\n7. Set up funnels in Firebase Analytics console\n8. Implement privacy-compliant analytics for underage users",
+            "status": "pending",
+            "testStrategy": "Verify analytics events are properly triggered during authentication flows. Test with Firebase Analytics debug view."
+          }
+        ]
+      },
+      {
+        "id": 23,
+        "title": "Create Onboarding Experience",
+        "description": "Develop the user onboarding flow with a 6-step wizard including goal setting, level selection, scheduling, permissions, and analytics tracking.",
+        "details": "1. Create intro screen with value proposition and begin button\n2. Implement 6-step wizard UI with progress indicator:\n   - Account creation/login\n   - Goal selection (chips UI)\n   - Level selection (chips UI)\n   - Schedule picker\n   - Notifications permission request\n   - Microphone permission request\n   - Language/locale selection\n3. Add back/next navigation with state persistence\n4. Implement skip functionality (where applicable)\n5. Add validation for required fields\n6. Implement analytics tracking for each step\n7. Create resumable onboarding state\n8. Design accessible UI with proper labels\n9. Add animations for transitions between steps",
+        "testStrategy": "1. Golden tests for each onboarding screen\n2. Integration tests for complete onboarding flow\n3. Test state persistence when app is closed mid-onboarding\n4. Verify analytics events are fired correctly\n5. Test accessibility with screen readers",
+        "priority": "high",
+        "dependencies": [
+          22
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create Intro Screen with Value Proposition",
+            "description": "Design and implement the initial onboarding screen that displays the app's value proposition and a prominent 'Begin' button to start the onboarding process.",
+            "dependencies": [],
+            "details": "Create a responsive screen with app logo, compelling headline, brief value proposition text, and a prominent CTA button. Implement with appropriate layout constraints for different screen sizes. Use animation for the button to draw attention.",
+            "status": "pending",
+            "testStrategy": "Create golden tests for the intro screen layout. Test responsiveness on different screen sizes. Verify button action navigates to the first wizard step."
+          },
+          {
+            "id": 2,
+            "title": "Implement Wizard UI Framework with Progress Indicator",
+            "description": "Create the base UI framework for the 6-step wizard including the progress indicator that shows users where they are in the onboarding flow.",
+            "dependencies": [
+              "23.1"
+            ],
+            "details": "Develop a reusable wizard container component with header, body area, and navigation footer. Implement a progress indicator showing 6 steps with the current step highlighted. Create transitions between steps with appropriate animations.",
+            "status": "pending",
+            "testStrategy": "Test wizard navigation between steps. Verify progress indicator updates correctly. Test accessibility of the wizard framework."
+          },
+          {
+            "id": 3,
+            "title": "Implement Account Creation/Login Step",
+            "description": "Build the first wizard step that allows users to create an account or log in to an existing one.",
+            "dependencies": [
+              "23.2"
+            ],
+            "details": "Create form with email/password fields, social login options, and validation. Implement account creation API integration. Add error handling for network issues and validation errors. Include 'Terms of Service' and 'Privacy Policy' checkboxes with links.",
+            "status": "pending",
+            "testStrategy": "Test form validation for all fields. Test successful and failed login/signup scenarios. Verify error messages display correctly."
+          },
+          {
+            "id": 4,
+            "title": "Implement Goal and Level Selection Steps",
+            "description": "Create the goal selection and level selection steps with chips UI for easy selection.",
+            "dependencies": [
+              "23.3"
+            ],
+            "details": "Implement two separate wizard steps: one for goal selection (using selectable chips with icons) and one for level selection (beginner, intermediate, advanced). Store selections in the onboarding state. Add descriptions for each option to help users make informed choices.",
+            "status": "pending",
+            "testStrategy": "Test selection and deselection of chips. Verify state persistence when navigating between steps. Test accessibility of chip components."
+          },
+          {
+            "id": 5,
+            "title": "Create Schedule Picker Step",
+            "description": "Implement the schedule picker step allowing users to set their preferred practice schedule.",
+            "dependencies": [
+              "23.4"
+            ],
+            "details": "Build a calendar-style interface for selecting days of the week and a time picker for selecting preferred time slots. Include options for reminder frequency. Store schedule preferences in the onboarding state.",
+            "status": "pending",
+            "testStrategy": "Test day selection and deselection. Verify time picker functionality. Test edge cases like selecting no days or times."
+          },
+          {
+            "id": 6,
+            "title": "Implement Permission Request Steps",
+            "description": "Create steps for requesting notification and microphone permissions with clear explanations of benefits.",
+            "dependencies": [
+              "23.5"
+            ],
+            "details": "Implement two separate steps: one for notification permissions and one for microphone permissions. Include explanatory text about why permissions are needed and how they improve the user experience. Add platform-specific permission request handling.",
+            "status": "pending",
+            "testStrategy": "Test permission flows for both grant and deny scenarios. Verify appropriate fallbacks when permissions are denied. Test on both iOS and Android platforms."
+          },
+          {
+            "id": 7,
+            "title": "Add Language/Locale Selection Step",
+            "description": "Create the language/locale selection step allowing users to customize their app experience.",
+            "dependencies": [
+              "23.6"
+            ],
+            "details": "Implement a searchable list of supported languages/locales with native language names and flags. Apply selected language immediately to demonstrate the change. Store language preference and apply it app-wide.",
+            "status": "pending",
+            "testStrategy": "Test language selection and immediate application. Verify search functionality works correctly. Test RTL language selection and layout changes."
+          },
+          {
+            "id": 8,
+            "title": "Implement Navigation and State Persistence",
+            "description": "Add back/next navigation controls with state persistence throughout the wizard and when the app is closed mid-onboarding.",
+            "dependencies": [
+              "23.2",
+              "23.3",
+              "23.4",
+              "23.5",
+              "23.6",
+              "23.7"
+            ],
+            "details": "Create navigation buttons at the bottom of each step. Implement state management to persist all user selections. Add logic to handle back navigation and step skipping where applicable. Implement local storage for resuming onboarding if the app is closed.",
+            "status": "pending",
+            "testStrategy": "Test navigation between all steps. Verify state persistence when navigating back and forth. Test app closure during onboarding and verify correct resumption."
+          },
+          {
+            "id": 9,
+            "title": "Add Validation and Skip Functionality",
+            "description": "Implement validation for required fields and skip functionality for optional steps.",
+            "dependencies": [
+              "23.8"
+            ],
+            "details": "Add validation logic for each step with appropriate error messages. Identify which steps can be skipped and implement skip buttons with confirmation dialogs where needed. Ensure validation runs before proceeding to the next step.",
+            "status": "pending",
+            "testStrategy": "Test validation for all required fields. Verify skip functionality works correctly. Test edge cases like skipping multiple steps."
+          },
+          {
+            "id": 10,
+            "title": "Implement Analytics Tracking and Final Onboarding Completion",
+            "description": "Add analytics tracking for each onboarding step and implement the final completion logic to transition users to the main app.",
+            "dependencies": [
+              "23.9"
+            ],
+            "details": "Integrate analytics to track step views, completions, skips, and time spent on each step. Create events for onboarding start and completion. Implement final transition animation from onboarding to main app. Add logic to prevent onboarding from showing again for completed users.",
+            "status": "pending",
+            "testStrategy": "Verify analytics events fire correctly for each step. Test complete onboarding flow end-to-end. Verify users aren't shown onboarding again after completion."
+          }
+        ]
+      },
+      {
+        "id": 24,
+        "title": "Implement Home Screen and Daily Lesson Structure",
+        "description": "Build the home screen with progress tracking, lesson categories, and the daily lesson flow with multiple activity types.",
+        "details": "1. Create home screen layout with:\n   - Progress ring showing completion status\n   - Lesson category cards (Reading, Listening, Speaking, Grammar)\n   - Streak indicator\n   - Start Daily Lesson CTA\n   - Quick actions (Practice, Review)\n2. Implement daily lesson flow structure:\n   - Lesson overview with topic and time estimate\n   - Speaking warm-up conversation\n   - Pronunciation exercises\n   - Grammar exercises with word tiles\n   - End-of-lesson summary\n3. Add lesson progress tracking\n4. Implement streak counting logic\n5. Create lesson completion analytics\n6. Add premium content gating logic\n7. Implement offline caching for lesson content",
+        "testStrategy": "1. Golden tests for home screen layout\n2. Integration tests for daily lesson flow\n3. Unit tests for progress tracking and streak counting\n4. Test premium gating logic\n5. Verify offline functionality with cached lessons",
+        "priority": "high",
+        "dependencies": [
+          21,
+          22
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create Home Screen Layout UI Components",
+            "description": "Implement the basic UI components for the home screen including progress ring, lesson category cards, streak indicator, and CTAs.",
+            "dependencies": [],
+            "details": "Use Flutter's Material Design widgets to create the home screen layout. Implement a custom progress ring widget using CustomPainter for showing completion status. Create reusable card widgets for lesson categories with appropriate icons and labels. Design the streak indicator with flame icon and counter. Implement primary CTA button for 'Start Daily Lesson' and secondary buttons for 'Practice' and 'Review' quick actions.",
+            "status": "pending",
+            "testStrategy": "Create golden tests for the home screen layout to verify visual appearance. Write widget tests to ensure all UI components render correctly and are responsive to different screen sizes."
+          },
+          {
+            "id": 2,
+            "title": "Implement Home Screen State Management",
+            "description": "Set up state management for the home screen to handle user data, progress tracking, and navigation.",
+            "dependencies": [
+              "24.1"
+            ],
+            "details": "Use a state management solution (Bloc, Provider, or Riverpod) to manage the home screen state. Create models for user progress, lesson categories, and streak data. Implement methods to fetch and update this data from the backend. Handle loading, error, and success states appropriately with loading indicators and error messages when needed. Connect UI components from subtask 1 to the state management system.",
+            "status": "pending",
+            "testStrategy": "Write unit tests for state management logic. Create integration tests to verify data flow between UI and state management. Test edge cases like loading states and error handling."
+          },
+          {
+            "id": 3,
+            "title": "Implement Progress Tracking Logic",
+            "description": "Create the logic for tracking user progress across lessons and updating the progress ring.",
+            "dependencies": [
+              "24.2"
+            ],
+            "details": "Implement a ProgressService that calculates overall user progress based on completed lessons. Create methods to update progress when lessons are completed. Implement logic to persist progress data to Firestore or local storage. Connect the progress ring UI to display the current progress percentage. Add animations for progress updates to provide visual feedback when progress changes.",
+            "status": "pending",
+            "testStrategy": "Write unit tests for progress calculation logic. Test persistence of progress data. Verify progress updates correctly after lesson completion."
+          },
+          {
+            "id": 4,
+            "title": "Implement Streak Counting Logic",
+            "description": "Build the system for tracking daily streaks and encouraging consistent app usage.",
+            "dependencies": [
+              "24.2"
+            ],
+            "details": "Create a StreakService to track consecutive days of app usage. Implement logic to increment streak counter when a user completes at least one lesson per day. Add streak reset logic when a day is missed. Implement streak freeze functionality if applicable. Store streak data persistently and handle timezone considerations. Update the streak indicator UI based on the current streak count.",
+            "status": "pending",
+            "testStrategy": "Unit test streak calculation logic with various date scenarios. Test streak persistence across app restarts. Verify streak freezes work correctly if implemented."
+          },
+          {
+            "id": 5,
+            "title": "Create Daily Lesson Flow Structure",
+            "description": "Implement the navigation and structure for the daily lesson flow with multiple screens and activities.",
+            "dependencies": [
+              "24.2"
+            ],
+            "details": "Create a LessonFlowController to manage the sequence of activities in a daily lesson. Implement a router/navigator to transition between different lesson activities. Design a consistent UI framework for all lesson activities with progress indicator, instructions area, content area, and navigation buttons. Create transition animations between lesson activities. Implement lesson overview screen showing topic and time estimate.",
+            "status": "pending",
+            "testStrategy": "Integration tests for the lesson flow to verify correct sequencing of activities. Test navigation between activities and proper state preservation during transitions."
+          },
+          {
+            "id": 6,
+            "title": "Implement Speaking and Pronunciation Exercises",
+            "description": "Create the UI and logic for speaking warm-up conversations and pronunciation exercises.",
+            "dependencies": [
+              "24.5"
+            ],
+            "details": "Integrate speech recognition API for capturing user speech. Implement audio playback for pronunciation examples. Create UI for conversation prompts and responses. Design feedback mechanism for pronunciation accuracy. Implement recording and playback controls. Handle microphone permissions appropriately. Create animations for audio waveforms during recording and speaking exercises.",
+            "status": "pending",
+            "testStrategy": "Test speech recognition integration with various accents and background noise levels. Verify audio playback functionality. Test microphone permission handling on different platforms."
+          },
+          {
+            "id": 7,
+            "title": "Implement Grammar Exercises with Word Tiles",
+            "description": "Build the interactive grammar exercises using draggable word tiles for sentence construction.",
+            "dependencies": [
+              "24.5"
+            ],
+            "details": "Create draggable word tile components with appropriate styling. Implement drop zones for sentence construction. Add validation logic to check if constructed sentences are correct. Design feedback animations for correct and incorrect answers. Implement hint system for users who are stuck. Create a scoring mechanism for grammar exercises. Support different types of grammar exercises (fill-in-blank, sentence reordering, etc.).",
+            "status": "pending",
+            "testStrategy": "Widget tests for drag-and-drop functionality. Integration tests for exercise validation logic. Test accessibility features for users with motor control limitations."
+          },
+          {
+            "id": 8,
+            "title": "Create Lesson Completion Analytics",
+            "description": "Implement analytics tracking for lesson completion, user performance, and engagement metrics.",
+            "dependencies": [
+              "24.3",
+              "24.5"
+            ],
+            "details": "Integrate Firebase Analytics or a similar analytics service. Define key events to track (lesson start, completion, time spent, exercise performance). Implement analytics service to log these events at appropriate points in the lesson flow. Create user performance metrics (accuracy, completion time, etc.). Set up funnels to track user progression through lessons. Ensure analytics respect user privacy settings and GDPR compliance.",
+            "status": "pending",
+            "testStrategy": "Verify analytics events are correctly triggered during lesson flow. Test that sensitive data is not logged. Validate that analytics respect user opt-out preferences."
+          },
+          {
+            "id": 9,
+            "title": "Implement Premium Content Gating Logic",
+            "description": "Add logic to differentiate between free and premium content, with appropriate UI indicators and upgrade prompts.",
+            "dependencies": [
+              "24.2"
+            ],
+            "details": "Create a PremiumContentService to check user subscription status. Implement UI indicators for premium content (badges, locks, etc.). Design upgrade prompts that appear when users attempt to access premium content. Create preview functionality for premium content to entice upgrades. Implement caching of subscription status for offline use. Connect with the subscription system to verify entitlements.",
+            "status": "pending",
+            "testStrategy": "Test premium content gates with both free and premium user accounts. Verify appropriate upgrade prompts appear at the right times. Test offline behavior of premium content gating."
+          },
+          {
+            "id": 10,
+            "title": "Implement Offline Caching for Lesson Content",
+            "description": "Create a system for caching lesson content locally to enable offline usage of the app.",
+            "dependencies": [
+              "24.5",
+              "24.7"
+            ],
+            "details": "Implement a CacheManager to download and store lesson content locally. Use Hive, SQLite, or another local storage solution for efficient data storage. Create background download functionality for upcoming lessons. Implement cache invalidation strategy for outdated content. Add UI indicators for offline availability. Handle synchronization when the device comes back online. Implement storage space management to prevent excessive cache size.",
+            "status": "pending",
+            "testStrategy": "Test offline functionality by disabling network connectivity. Verify cached lessons are accessible offline. Test synchronization behavior when connectivity is restored. Verify cache size management works correctly."
+          }
+        ]
+      },
+      {
+        "id": 25,
+        "title": "Develop Conversation System with AI Feedback",
+        "description": "Create the real-time conversation experience with speech recognition, AI responses, and feedback on pronunciation and grammar.",
+        "details": "1. Implement conversation UI with chat bubbles and turn-taking\n2. Integrate Google Cloud Speech-to-Text streaming API via Firebase Functions\n3. Create microphone controls with states: idle/recording/permission-denied/network-offline\n4. Implement waveform visualization for audio recording and playback\n5. Add live caption display during speech recognition\n6. Create TTS playback controls (play/pause, replay, speed selection)\n7. Implement AI feedback system for grammar and pronunciation\n8. Add conversation session controls (next, end session, report issue)\n9. Implement usage limits for free tier (time or session count)\n10. Create conversation history storage in Firestore\n11. Optimize for latency (<400ms per turn)\n12. Implement audio caching for TTS responses",
+        "testStrategy": "1. Unit tests for conversation state management\n2. Integration tests for speech recognition and TTS\n3. Performance testing for latency budget\n4. Test offline behavior and error states\n5. Verify analytics tracking for conversation events",
+        "priority": "high",
+        "dependencies": [
+          21,
+          22,
+          24
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Implement Conversation UI with Chat Bubbles",
+            "description": "Create the user interface for the conversation system with chat bubbles that clearly distinguish between user and AI messages, including proper styling and animations.",
+            "dependencies": [],
+            "details": "Create a responsive conversation container with alternating chat bubbles. User messages should be right-aligned with a distinct color, while AI responses should be left-aligned with a different color. Implement smooth fade-in animations for new messages. Include timestamps and status indicators (sending, sent, error). Ensure the conversation auto-scrolls to the latest message.",
+            "status": "pending",
+            "testStrategy": "Create snapshot tests for chat bubble rendering in different states. Test auto-scrolling behavior and animations."
+          },
+          {
+            "id": 2,
+            "title": "Integrate Speech-to-Text API via Firebase Functions",
+            "description": "Set up the connection to Google Cloud Speech-to-Text API through Firebase Functions to enable real-time speech recognition.",
+            "dependencies": [
+              "25.1"
+            ],
+            "details": "Create a Firebase Function that acts as a proxy to the Google Cloud Speech-to-Text API. Implement streaming recognition to process audio in real-time. Set up proper authentication and API key management. Configure language detection or selection. Implement error handling for network issues and API limits. Optimize for low latency by using appropriate streaming settings.",
+            "status": "pending",
+            "testStrategy": "Test the API integration with sample audio files. Measure latency and accuracy. Verify error handling for various failure scenarios."
+          },
+          {
+            "id": 3,
+            "title": "Develop Microphone Controls with State Management",
+            "description": "Create microphone controls that handle different states: idle, recording, permission-denied, and network-offline.",
+            "dependencies": [
+              "25.1"
+            ],
+            "details": "Implement a microphone button with visual indicators for each state. Create a state machine to manage transitions between states. Handle browser permissions properly, showing appropriate UI for permission requests and denials. Implement offline detection and feedback. Add haptic feedback for state changes on mobile devices.",
+            "status": "pending",
+            "testStrategy": "Test state transitions for all possible combinations. Verify permission handling across different browsers. Test offline behavior by simulating network disconnections."
+          },
+          {
+            "id": 4,
+            "title": "Implement Audio Waveform Visualization",
+            "description": "Create a visual representation of audio input and output as a waveform during recording and playback.",
+            "dependencies": [
+              "25.3"
+            ],
+            "details": "Use the Web Audio API to analyze audio data and extract amplitude information. Create a canvas-based visualization that updates in real-time. Implement smooth animations for the waveform. Add visual indicators for volume levels. Ensure the visualization is responsive and works on different screen sizes.",
+            "status": "pending",
+            "testStrategy": "Test waveform rendering with different audio inputs. Verify performance on low-end devices. Test responsiveness across different screen sizes."
+          },
+          {
+            "id": 5,
+            "title": "Add Live Caption Display During Speech Recognition",
+            "description": "Implement a real-time caption display that shows the user's speech as it's being recognized.",
+            "dependencies": [
+              "25.2",
+              "25.3"
+            ],
+            "details": "Create a caption container that displays interim recognition results. Implement styling for different confidence levels. Add visual indicators for when the system is listening vs. processing. Handle corrections and updates to the transcript smoothly. Ensure the captions are accessible and follow WCAG guidelines.",
+            "status": "pending",
+            "testStrategy": "Test caption updates with various speech patterns and speeds. Verify accessibility compliance. Test with different languages and accents."
+          },
+          {
+            "id": 6,
+            "title": "Create TTS Playback Controls",
+            "description": "Implement text-to-speech playback controls including play/pause, replay, and speed selection.",
+            "dependencies": [
+              "25.1"
+            ],
+            "details": "Integrate with a TTS service (Google Cloud TTS or browser's native Speech Synthesis API). Create playback controls with appropriate icons and states. Implement speed selection (0.75x, 1x, 1.25x, 1.5x). Add progress indication during playback. Implement audio caching to reduce latency for repeated phrases.",
+            "status": "pending",
+            "testStrategy": "Test playback controls across different browsers. Verify speed selection functionality. Measure and optimize loading times with and without caching."
+          },
+          {
+            "id": 7,
+            "title": "Implement AI Feedback System for Grammar and Pronunciation",
+            "description": "Create a system that analyzes user speech and provides feedback on grammar and pronunciation accuracy.",
+            "dependencies": [
+              "25.2",
+              "25.5"
+            ],
+            "details": "Implement an AI service that compares user speech to expected patterns. Highlight errors in grammar with explanations. Provide pronunciation feedback with phonetic guidance. Create a scoring system (0-100) for overall accuracy. Generate actionable improvement suggestions. Store feedback history for progress tracking.",
+            "status": "pending",
+            "testStrategy": "Test feedback accuracy with various speech samples. Verify scoring consistency. Test with non-native speakers of different proficiency levels."
+          },
+          {
+            "id": 8,
+            "title": "Add Conversation Session Controls",
+            "description": "Implement controls to manage conversation sessions, including next topic, end session, and report issue functionality.",
+            "dependencies": [
+              "25.1",
+              "25.6"
+            ],
+            "details": "Create a control panel with buttons for session management. Implement confirmation dialogs for ending sessions. Add a report issue form with categories and description field. Create smooth transitions between conversation topics. Implement session summary at the end with key metrics and feedback.",
+            "status": "pending",
+            "testStrategy": "Test session transitions and state persistence. Verify report issue submission flow. Test end-of-session summary generation."
+          },
+          {
+            "id": 9,
+            "title": "Implement Usage Limits for Free Tier",
+            "description": "Create a system to track and limit conversation time or session count for free tier users.",
+            "dependencies": [
+              "25.8"
+            ],
+            "details": "Implement a counter for tracking usage (time-based or session-based). Create UI elements to show remaining usage. Add upgrade prompts when approaching limits. Implement graceful session ending when limits are reached. Store usage data in Firestore with proper security rules.",
+            "status": "pending",
+            "testStrategy": "Test limit enforcement with simulated usage patterns. Verify upgrade prompts appear at appropriate times. Test persistence of usage data across sessions."
+          },
+          {
+            "id": 10,
+            "title": "Create Conversation History Storage in Firestore",
+            "description": "Implement a system to store conversation history in Firestore for later review and continuation.",
+            "dependencies": [
+              "25.1",
+              "25.7",
+              "25.9"
+            ],
+            "details": "Design a Firestore schema for conversation data. Implement real-time syncing of conversations. Add pagination for loading historical conversations. Implement data retention policies and cleanup functions. Create security rules to ensure user data privacy. Add export functionality for conversation history.",
+            "status": "pending",
+            "testStrategy": "Test data persistence and retrieval performance. Verify security rules prevent unauthorized access. Test with large conversation histories to ensure performance."
+          }
+        ]
+      },
+      {
+        "id": 26,
+        "title": "Build Pronunciation and Grammar Exercise Components",
+        "description": "Develop the core exercise components for pronunciation scoring and grammar practice with word tiles.",
+        "details": "1. Create pronunciation exercise UI:\n   - Phrase display with playback controls\n   - Recording interface with waveform\n   - Score meter (0-100) with color bands\n   - Error highlighting at phoneme/word level\n   - Tips panel for improvement\n2. Implement grammar exercise UI:\n   - Word-bank chips (scrollable)\n   - Answer area with drag-and-drop or tap interaction\n   - Validation and feedback system\n   - Explanation panel for corrections\n3. Integrate pronunciation scoring via Cloud Functions\n4. Implement word tile drag-and-drop with accessibility support\n5. Create scoring and attempt tracking system\n6. Add analytics for exercise completion and scores",
+        "testStrategy": "1. Golden tests for exercise UI components\n2. Unit tests for scoring logic\n3. Integration tests for complete exercise flows\n4. Accessibility testing for drag-and-drop interactions\n5. Test error states and retry functionality",
+        "priority": "medium",
+        "dependencies": [
+          21,
+          24,
+          25
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create Pronunciation Exercise UI Components",
+            "description": "Develop the core UI components for the pronunciation exercise including phrase display, playback controls, and basic layout structure.",
+            "dependencies": [],
+            "details": "Create React components for the pronunciation exercise UI. Implement the phrase display component with proper typography and styling. Add playback controls (play, pause, replay) with appropriate icons and hover states. Ensure the layout is responsive and follows the design system. Use CSS Grid or Flexbox for the overall layout structure.",
+            "status": "pending",
+            "testStrategy": "Create snapshot tests for UI components. Implement unit tests for playback control functionality. Verify responsive behavior across different screen sizes."
+          },
+          {
+            "id": 2,
+            "title": "Implement Audio Recording Interface with Waveform",
+            "description": "Build the audio recording interface for pronunciation exercises, including microphone controls and waveform visualization.",
+            "dependencies": [
+              "26.1"
+            ],
+            "details": "Create a recording component with start/stop functionality. Implement microphone access with proper permission handling. Develop a waveform visualization that updates in real-time during recording. Use the Web Audio API for capturing audio and analyzing frequency data for the waveform. Add visual indicators for recording state (idle, recording, processing).",
+            "status": "pending",
+            "testStrategy": "Test microphone permission flows including denied states. Verify waveform visualization accuracy with mock audio data. Ensure proper cleanup of audio resources."
+          },
+          {
+            "id": 3,
+            "title": "Develop Pronunciation Scoring UI Components",
+            "description": "Create the UI components for displaying pronunciation scores, including the score meter and error highlighting at phoneme/word level.",
+            "dependencies": [
+              "26.1"
+            ],
+            "details": "Implement a circular or linear score meter (0-100) with color bands (red, yellow, green) to indicate performance levels. Create a component for highlighting errors at word and phoneme level in the displayed phrase. Design and implement a tips panel that shows improvement suggestions based on scoring results. Ensure all components support animation for score reveals.",
+            "status": "pending",
+            "testStrategy": "Create unit tests for score calculation and display logic. Test color band transitions at different score thresholds. Verify error highlighting functionality with various test phrases."
+          },
+          {
+            "id": 4,
+            "title": "Integrate Pronunciation Scoring with Cloud Functions",
+            "description": "Connect the pronunciation exercise to backend scoring services via Cloud Functions to analyze recorded audio and return detailed feedback.",
+            "dependencies": [
+              "26.2",
+              "26.3"
+            ],
+            "details": "Create a service to upload recorded audio to Cloud Storage. Implement a Cloud Function trigger that processes the audio using a speech recognition API (e.g., Google Cloud Speech-to-Text). Develop scoring logic that compares the recognized text with the expected phrase and generates phoneme-level accuracy scores. Return structured feedback data including overall score, word-level issues, and improvement suggestions.",
+            "status": "pending",
+            "testStrategy": "Test the end-to-end flow with various audio samples. Create mock responses for development and testing. Measure and optimize processing time. Implement error handling for network issues and API failures."
+          },
+          {
+            "id": 5,
+            "title": "Create Grammar Exercise UI Base Components",
+            "description": "Develop the foundational UI components for the grammar exercise, including the word bank and answer area layout.",
+            "dependencies": [],
+            "details": "Create a scrollable word bank component with word chips that can be selected. Implement the answer area with placeholders for word arrangement. Design the overall exercise layout with clear instructions area, word bank, and answer section. Ensure the UI is responsive and follows accessibility guidelines. Add basic styling according to the design system.",
+            "status": "pending",
+            "testStrategy": "Create snapshot tests for UI components. Test responsive behavior across different screen sizes. Verify scrolling behavior in the word bank with varying numbers of words."
+          },
+          {
+            "id": 6,
+            "title": "Implement Word Tile Drag-and-Drop Functionality",
+            "description": "Build the interactive drag-and-drop system for word tiles with touch and mouse support, including accessibility features.",
+            "dependencies": [
+              "26.5"
+            ],
+            "details": "Implement drag-and-drop functionality using a library like react-dnd or a custom solution. Support both mouse and touch interactions. Add visual feedback during dragging (shadow, opacity changes). Implement keyboard navigation for accessibility (tab navigation, arrow keys for movement). Add ARIA attributes and screen reader support. Ensure the system handles edge cases like dropping outside valid areas.",
+            "status": "pending",
+            "testStrategy": "Test drag-and-drop with both mouse and touch events. Verify keyboard navigation works correctly. Run accessibility tests to ensure ARIA compliance. Test with screen readers to verify the experience for visually impaired users."
+          },
+          {
+            "id": 7,
+            "title": "Develop Grammar Exercise Validation and Feedback System",
+            "description": "Create the system to validate user-arranged word tiles against correct grammar patterns and provide appropriate feedback.",
+            "dependencies": [
+              "26.5",
+              "26.6"
+            ],
+            "details": "Implement validation logic to check if the arranged words form a grammatically correct sentence. Create visual feedback for correct and incorrect answers (color changes, animations). Develop an explanation panel component that shows grammar rules and corrections for incorrect answers. Add support for partial correctness scoring. Implement a hint system that can reveal the next correct word placement.",
+            "status": "pending",
+            "testStrategy": "Create unit tests for validation logic with various grammar patterns. Test the feedback system with correct, partially correct, and incorrect answers. Verify explanation content is appropriate for different error types."
+          },
+          {
+            "id": 8,
+            "title": "Create Scoring and Attempt Tracking System",
+            "description": "Develop a system to track user attempts, scores, and progress across both pronunciation and grammar exercises.",
+            "dependencies": [
+              "26.4",
+              "26.7"
+            ],
+            "details": "Create a data model for tracking exercise attempts, scores, and completion status. Implement local storage for offline progress tracking. Develop a service to sync progress with Firebase when online. Create UI components to display progress history and best scores. Implement logic to determine when an exercise is considered mastered based on score thresholds.",
+            "status": "pending",
+            "testStrategy": "Test data persistence across page reloads. Verify offline functionality works correctly. Test synchronization with backend when connection is restored. Validate score calculation and mastery determination logic."
+          },
+          {
+            "id": 9,
+            "title": "Implement Analytics for Exercise Completion and Scores",
+            "description": "Add analytics tracking for exercise interactions, completion rates, and score distributions to gather user performance data.",
+            "dependencies": [
+              "26.8"
+            ],
+            "details": "Integrate Firebase Analytics or a similar service. Track key events: exercise start, completion, abandonment, and retry. Record score distributions for both exercise types. Measure time spent on exercises and number of attempts. Create custom dimensions for exercise types and difficulty levels. Implement a service layer to standardize analytics calls throughout the application.",
+            "status": "pending",
+            "testStrategy": "Verify analytics events are firing correctly in development environment. Create a test mode that logs events locally instead of sending to analytics service. Test that all required parameters are included in analytics events."
+          },
+          {
+            "id": 10,
+            "title": "Integrate Exercise Components into Learning Path",
+            "description": "Connect the pronunciation and grammar exercise components to the overall learning path and lesson flow.",
+            "dependencies": [
+              "26.8",
+              "26.9"
+            ],
+            "details": "Create container components that can embed exercises within lessons. Implement navigation between different exercise types within a lesson. Add progress tracking that updates the overall lesson completion status. Develop transition animations between exercises. Ensure exercise difficulty scales appropriately based on user level. Create a consistent UI for exercise instructions and completion states.",
+            "status": "pending",
+            "testStrategy": "Test the complete user flow through multiple exercise types. Verify progress is correctly tracked at both exercise and lesson level. Test navigation between exercises works as expected. Ensure animations and transitions perform well on lower-end devices."
+          }
+        ]
+      },
+      {
+        "id": 27,
+        "title": "Implement Practice Tab and Review System",
+        "description": "Create the practice tab with skill-based drills and a review system for past mistakes.",
+        "details": "1. Build practice tab UI with:\n   - Skill filters (pronunciation/grammar/vocab/speaking)\n   - Drill cards with difficulty tags\n   - Start CTA for each drill\n2. Implement review system:\n   - Mistake cards from previous attempts\n   - Filtering by skill/date\n   - Re-drill functionality\n3. Create practice session flow\n4. Implement scoring and feedback for practice drills\n5. Add analytics for practice sessions\n6. Create offline support for cached practice content\n7. Implement queue system for surfacing recent mistakes\n8. Add export/share functionality for review items",
+        "testStrategy": "1. Golden tests for practice tab UI\n2. Integration tests for practice session flow\n3. Unit tests for review queue logic\n4. Test offline functionality\n5. Verify analytics for practice events",
+        "priority": "medium",
+        "dependencies": [
+          24,
+          26
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create Practice Tab UI Layout",
+            "description": "Design and implement the basic UI layout for the practice tab including navigation, header, and container elements.",
+            "dependencies": [],
+            "details": "Create a new PracticeScreen widget with a scaffold, app bar, and body container. Implement tab navigation if needed. Use a responsive layout that works across device sizes. Include placeholder sections for skill filters and drill cards that will be populated later.",
+            "status": "pending",
+            "testStrategy": "Create golden tests for the practice tab UI layout in different screen sizes."
+          },
+          {
+            "id": 2,
+            "title": "Implement Skill Filter Components",
+            "description": "Build the skill filter UI components that allow users to filter practice drills by category (pronunciation, grammar, vocabulary, speaking).",
+            "dependencies": [
+              "27.1"
+            ],
+            "details": "Create a FilterBar widget with toggle buttons or chips for each skill category. Implement state management to track selected filters. Add animations for filter selection. Ensure filters are accessible and have proper contrast.",
+            "status": "pending",
+            "testStrategy": "Test filter selection logic and verify UI state changes correctly when filters are applied."
+          },
+          {
+            "id": 3,
+            "title": "Build Drill Card Components",
+            "description": "Create the UI components for individual drill cards showing difficulty tags and start buttons.",
+            "dependencies": [
+              "27.1"
+            ],
+            "details": "Design a DrillCard widget that displays drill title, description, difficulty tag (easy/medium/hard), estimated completion time, and a prominent start CTA button. Implement proper styling and hover/press states. Add animations for card interactions.",
+            "status": "pending",
+            "testStrategy": "Create golden tests for drill cards in different states and verify tap interactions."
+          },
+          {
+            "id": 4,
+            "title": "Implement Practice Session Flow",
+            "description": "Create the complete user flow for starting and completing a practice drill session.",
+            "dependencies": [
+              "27.3"
+            ],
+            "details": "Build a PracticeSessionScreen that guides users through drill exercises. Implement a step indicator, progress tracking, and navigation between questions. Add a timer if relevant. Create a session completion screen with summary and next steps.",
+            "status": "pending",
+            "testStrategy": "Create integration tests for the complete practice session flow from start to finish."
+          },
+          {
+            "id": 5,
+            "title": "Develop Scoring and Feedback System",
+            "description": "Implement the logic for scoring practice attempts and providing meaningful feedback to users.",
+            "dependencies": [
+              "27.4"
+            ],
+            "details": "Create a scoring algorithm based on correctness, speed, and consistency. Implement visual and textual feedback for correct/incorrect answers. Add encouraging messages based on performance. Store detailed attempt data for later review.",
+            "status": "pending",
+            "testStrategy": "Unit test scoring algorithms with various input scenarios. Verify feedback messages are appropriate for different performance levels."
+          },
+          {
+            "id": 6,
+            "title": "Build Review System UI",
+            "description": "Create the UI for the review system that displays past mistakes and allows filtering.",
+            "dependencies": [
+              "27.1"
+            ],
+            "details": "Design a ReviewSection widget with mistake cards showing the original question, user's incorrect answer, and correct answer. Implement filtering by skill type and date range. Add sorting options (newest/oldest/most frequent). Include empty state handling.",
+            "status": "pending",
+            "testStrategy": "Create golden tests for the review system UI with various data states including empty states."
+          },
+          {
+            "id": 7,
+            "title": "Implement Mistake Tracking and Storage",
+            "description": "Create the data model and storage logic for tracking user mistakes across practice sessions.",
+            "dependencies": [
+              "27.5"
+            ],
+            "details": "Design a Mistake data model to store question data, user's answer, correct answer, timestamp, and skill category. Implement database operations to save mistakes during practice sessions. Create queries to retrieve mistakes filtered by various criteria.",
+            "status": "pending",
+            "testStrategy": "Unit test database operations for mistake tracking. Verify data persistence across app restarts."
+          },
+          {
+            "id": 8,
+            "title": "Develop Re-drill Functionality",
+            "description": "Implement the ability for users to practice specific mistakes from their review section.",
+            "dependencies": [
+              "27.6",
+              "27.7"
+            ],
+            "details": "Create a mechanism to generate targeted practice drills from past mistakes. Implement a 'Practice This' button on mistake cards. Build a specialized practice session flow for reviewing specific mistakes. Track improvement on previously incorrect items.",
+            "status": "pending",
+            "testStrategy": "Test the complete re-drill flow from selecting a mistake to completing the targeted practice session."
+          },
+          {
+            "id": 9,
+            "title": "Add Analytics for Practice Sessions",
+            "description": "Implement analytics tracking for practice sessions to monitor user engagement and performance.",
+            "dependencies": [
+              "27.4",
+              "27.5"
+            ],
+            "details": "Define key events to track: practice session starts, completions, abandonment, scores, time spent, and mistake patterns. Implement analytics service calls at appropriate points in the practice flow. Create a dashboard-ready data structure for reporting.",
+            "status": "pending",
+            "testStrategy": "Verify analytics events are firing correctly during practice sessions. Test that all required parameters are included in events."
+          },
+          {
+            "id": 10,
+            "title": "Implement Offline Support for Practice Content",
+            "description": "Add functionality to cache practice content locally and enable offline practice sessions.",
+            "dependencies": [
+              "27.4",
+              "27.7"
+            ],
+            "details": "Implement a caching system for drill content using local storage. Create a sync mechanism to update cached content when online. Build offline detection and appropriate UI indicators. Ensure practice results are stored locally and synced when connection is restored.",
+            "status": "pending",
+            "testStrategy": "Test practice functionality in airplane mode. Verify that cached content is accessible offline and that results sync correctly when connection is restored."
+          }
+        ]
+      },
+      {
+        "id": 28,
+        "title": "Develop League and Achievement Systems",
+        "description": "Build the weekly league competition system with tiers, points, and rewards, plus user achievements and badges.",
+        "details": "1. Create league tab UI with:\n   - Tier card (bronze/silver/gold)\n   - Points progress bar\n   - Weekly reset timer\n   - Claim reward button\n   - Rules explanation\n2. Implement profile and achievements UI:\n   - Avatar and name editing\n   - Badges grid with locked/unlocked states\n   - Share functionality for achievements\n3. Create league points system tied to lesson and practice completion\n4. Implement weekly reset logic and tier progression\n5. Add anti-cheat heuristics\n6. Create achievement unlock criteria and tracking\n7. Implement reward claiming and distribution\n8. Add analytics for league and achievement events",
+        "testStrategy": "1. Golden tests for league and profile UI\n2. Unit tests for points calculation and tier progression\n3. Integration tests for complete league cycle\n4. Test anti-cheat detection\n5. Verify achievement unlock conditions",
+        "priority": "medium",
+        "dependencies": [
+          24,
+          27
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create League Tab UI Components",
+            "description": "Develop the UI components for the league tab including tier card, points progress bar, weekly reset timer, claim reward button, and rules explanation section.",
+            "dependencies": [],
+            "details": "Use React components with styled-components for styling. Create a TierCard component that displays bronze/silver/gold tiers with appropriate visual indicators. Implement a PointsProgressBar component showing current points and threshold for next tier. Add WeeklyResetTimer component with countdown functionality. Create ClaimRewardButton component with enabled/disabled states based on eligibility. Design a collapsible RulesExplanation component.",
+            "status": "pending",
+            "testStrategy": "Create snapshot tests for each UI component. Implement golden tests to verify the complete league tab UI renders correctly across different device sizes."
+          },
+          {
+            "id": 2,
+            "title": "Implement Profile and Achievement UI",
+            "description": "Build the user profile UI with avatar/name editing functionality and the achievements grid showing locked and unlocked badges.",
+            "dependencies": [],
+            "details": "Create a ProfileHeader component with editable avatar (upload functionality) and name fields. Implement an AchievementGrid component that displays badges in a responsive grid layout with clear visual distinction between locked and unlocked states. Add tooltips to show achievement descriptions and criteria. Implement a ShareButton component that generates shareable content for completed achievements.",
+            "status": "pending",
+            "testStrategy": "Create snapshot tests for profile components. Test avatar upload functionality with mock file system. Verify responsive layout of achievement grid across different screen sizes."
+          },
+          {
+            "id": 3,
+            "title": "Develop League Points System",
+            "description": "Implement the core logic for awarding and tracking league points based on user activities like lesson and practice completion.",
+            "dependencies": [],
+            "details": "Create a PointsService that defines point values for different activities (lesson completion, practice sessions, streak maintenance, etc.). Implement functions to award points and update user's total. Store point history with timestamps for auditing. Create listeners for relevant app events to trigger point awards automatically. Implement a user-facing points history view.",
+            "status": "pending",
+            "testStrategy": "Write unit tests for point calculation logic. Create integration tests to verify points are correctly awarded for different user activities. Test edge cases like maximum daily points limits."
+          },
+          {
+            "id": 4,
+            "title": "Build Weekly Reset and Tier Progression Logic",
+            "description": "Implement the system for weekly league resets, determining user rankings, and handling tier progression/demotion.",
+            "dependencies": [
+              "28.3"
+            ],
+            "details": "Create a scheduled job that runs weekly to calculate final standings. Implement tier threshold logic (points required for bronze/silver/gold). Store historical league performance in user profiles. Handle edge cases like ties in rankings. Implement notifications for tier changes. Create admin dashboard for monitoring league statistics and manually adjusting tiers if needed.",
+            "status": "pending",
+            "testStrategy": "Write unit tests for tier calculation logic. Create time-based tests that simulate a complete weekly cycle. Test edge cases like users with identical point totals."
+          },
+          {
+            "id": 5,
+            "title": "Implement Reward Claiming and Distribution",
+            "description": "Create the system for generating rewards based on league performance and allowing users to claim them.",
+            "dependencies": [
+              "28.4"
+            ],
+            "details": "Design a RewardService that determines rewards based on tier and ranking. Implement database schema for tracking available and claimed rewards. Create the claim reward workflow including verification of eligibility. Add animations and feedback for the reward claiming process. Implement expiration logic for unclaimed rewards.",
+            "status": "pending",
+            "testStrategy": "Test reward calculation logic for different tiers. Verify claim process works correctly including handling of already-claimed rewards. Test expiration functionality with time-based tests."
+          },
+          {
+            "id": 6,
+            "title": "Develop Achievement Unlock Criteria and Tracking",
+            "description": "Implement the system for defining achievement criteria, tracking progress, and unlocking achievements.",
+            "dependencies": [
+              "28.3"
+            ],
+            "details": "Create an AchievementService with definitions for all achievements and their unlock criteria. Implement progress tracking for multi-step achievements. Create listeners for app events that trigger achievement checks. Add notifications for newly unlocked achievements. Store achievement data in user profiles with unlock timestamps.",
+            "status": "pending",
+            "testStrategy": "Write unit tests for each achievement's unlock logic. Create integration tests that simulate user actions and verify correct achievements are unlocked. Test edge cases like achievements with multiple criteria."
+          },
+          {
+            "id": 7,
+            "title": "Add Anti-Cheat Heuristics",
+            "description": "Implement measures to detect and prevent gaming of the league system through suspicious activity patterns.",
+            "dependencies": [
+              "28.3",
+              "28.4"
+            ],
+            "details": "Create heuristics to identify suspicious patterns (e.g., abnormal point accumulation rates, unusual activity timing). Implement rate limiting for point-earning activities. Add flagging system for suspicious accounts for manual review. Create an admin interface for reviewing flagged accounts. Implement penalties for confirmed cheating.",
+            "status": "pending",
+            "testStrategy": "Create tests with simulated cheating patterns to verify detection. Test false positive rates to ensure legitimate users aren't flagged. Verify admin tools function correctly for reviewing flagged accounts."
+          },
+          {
+            "id": 8,
+            "title": "Implement Analytics for League and Achievement Events",
+            "description": "Add comprehensive analytics tracking for league participation, achievement unlocks, and user engagement with these systems.",
+            "dependencies": [
+              "28.3",
+              "28.6"
+            ],
+            "details": "Define key events to track (league participation, tier changes, achievement unlocks, reward claims). Implement analytics service integration using Firebase Analytics or similar. Create custom event parameters to capture relevant details. Set up funnels to track user progression through the league system. Implement dashboards for monitoring engagement metrics.",
+            "status": "pending",
+            "testStrategy": "Verify analytics events are correctly fired in test environment. Create integration tests that simulate user flows and confirm all expected events are tracked with correct parameters."
+          },
+          {
+            "id": 9,
+            "title": "Create Share Functionality for Achievements",
+            "description": "Implement the ability for users to share their achievements and league progress on social media platforms.",
+            "dependencies": [
+              "28.2",
+              "28.6"
+            ],
+            "details": "Create shareable templates for achievements and league progress with app branding. Implement integration with native sharing APIs. Generate images for achievements that can be shared. Add deep linking support so shared content can direct back to the app. Track sharing analytics to measure engagement.",
+            "status": "pending",
+            "testStrategy": "Test sharing functionality across different platforms. Verify generated share content appears correctly on major social platforms. Test deep links to ensure they direct to the correct app location."
+          },
+          {
+            "id": 10,
+            "title": "Integrate League and Achievement Systems with Core App",
+            "description": "Connect the league and achievement systems with the existing app infrastructure and ensure cohesive user experience.",
+            "dependencies": [
+              "28.1",
+              "28.2",
+              "28.3",
+              "28.4",
+              "28.5",
+              "28.6",
+              "28.7",
+              "28.8",
+              "28.9"
+            ],
+            "details": "Update app navigation to include league and profile tabs. Integrate notification system for league and achievement events. Ensure consistent styling with existing app components. Implement onboarding for new users to explain league and achievement systems. Add league and achievement information to relevant screens throughout the app. Perform end-to-end testing of the integrated systems.",
+            "status": "pending",
+            "testStrategy": "Conduct end-to-end testing of the complete user journey. Verify notifications appear correctly. Test performance impact of the new systems on app startup time and runtime performance. Conduct usability testing to ensure intuitive integration."
+          }
+        ]
+      },
+      {
+        "id": 29,
+        "title": "Implement Subscription and Payment System",
+        "description": "Build the subscription system with in-app purchases, paywall, and premium feature gating.",
+        "details": "1. Integrate Google Play Billing via in_app_purchase or purchases_flutter\n2. Add Apple IAP for iOS\n3. Create subscription products:\n   - Monthly plan\n   - Annual plan (discounted)\n   - Lifetime plan (optional)\n   - Free trial and intro offers\n4. Implement paywall UI:\n   - Plan selection cards\n   - Feature comparison checklist\n   - Purchase CTA\n   - Restore purchases link\n   - Terms and privacy links\n5. Create server-side receipt validation via Cloud Functions\n6. Implement entitlement checking throughout the app\n7. Add premium feature gating at key moments:\n   - After free daily lesson\n   - When conversation limit is reached\n   - When accessing advanced practice packs\n   - For higher league tiers\n8. Create subscription management in settings\n9. Implement analytics for purchase events",
+        "testStrategy": "1. Integration tests for purchase flow using test accounts\n2. Unit tests for entitlement checking\n3. Test restore purchases functionality\n4. Verify server-side receipt validation\n5. Test premium gates with both free and premium accounts",
+        "priority": "high",
+        "dependencies": [
+          21,
+          22
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Set up in-app purchase packages and dependencies",
+            "description": "Configure the project with the necessary packages for in-app purchases on both Android and iOS platforms.",
+            "dependencies": [],
+            "details": "Add in_app_purchase or purchases_flutter package to pubspec.yaml. Configure Android project by updating the AndroidManifest.xml with billing permission. Set up iOS project by configuring StoreKit in the Info.plist file. Initialize the purchase package in the app startup.",
+            "status": "pending",
+            "testStrategy": "Verify package initialization with mock responses to ensure the setup is correct."
+          },
+          {
+            "id": 2,
+            "title": "Create subscription product models and services",
+            "description": "Define data models and services to handle subscription products across platforms.",
+            "dependencies": [
+              "29.1"
+            ],
+            "details": "Create models for subscription plans (monthly, annual, lifetime). Implement a SubscriptionService class that handles product fetching, purchase processing, and status checking. Map Google Play and App Store product IDs to internal product models. Implement methods to fetch available products from the stores.",
+            "status": "pending",
+            "testStrategy": "Unit test the subscription models and service with mock store responses."
+          },
+          {
+            "id": 3,
+            "title": "Implement paywall UI components",
+            "description": "Design and implement the UI components for the subscription paywall.",
+            "dependencies": [
+              "29.2"
+            ],
+            "details": "Create plan selection cards with price display. Implement feature comparison checklist showing free vs premium features. Add purchase call-to-action button. Include restore purchases link at the bottom. Add terms and privacy policy links. Ensure responsive design for different screen sizes.",
+            "status": "pending",
+            "testStrategy": "Golden tests for paywall UI components. Test UI rendering with different subscription data."
+          },
+          {
+            "id": 4,
+            "title": "Build purchase flow and transaction handling",
+            "description": "Implement the core purchase flow for initiating and processing transactions.",
+            "dependencies": [
+              "29.2",
+              "29.3"
+            ],
+            "details": "Create purchase methods in the SubscriptionService. Handle purchase flow states (pending, completed, failed). Implement error handling for failed purchases. Add loading indicators during purchase processing. Create success and failure UI states. Handle App Store and Google Play specific purchase flows.",
+            "status": "pending",
+            "testStrategy": "Integration tests with test accounts. Mock purchase responses to test different scenarios."
+          },
+          {
+            "id": 5,
+            "title": "Implement server-side receipt validation",
+            "description": "Create Cloud Functions to validate purchase receipts from both app stores.",
+            "dependencies": [
+              "29.4"
+            ],
+            "details": "Create Firebase Cloud Functions for receipt validation. Implement Google Play receipt validation using Google Play Developer API. Implement App Store receipt validation using App Store Server API. Store validated purchase information in Firestore. Handle subscription status updates (new, renewed, expired, canceled).",
+            "status": "pending",
+            "testStrategy": "Test receipt validation with test purchase tokens. Verify Firestore updates after validation."
+          },
+          {
+            "id": 6,
+            "title": "Create subscription state management",
+            "description": "Implement state management for subscription status throughout the app.",
+            "dependencies": [
+              "29.5"
+            ],
+            "details": "Create a SubscriptionProvider using Provider/Riverpod/Bloc. Implement methods to check subscription status. Add listeners for subscription changes. Cache subscription status for offline access. Implement subscription refresh on app startup. Create helper methods for feature access checks.",
+            "status": "pending",
+            "testStrategy": "Unit tests for subscription state management. Test state transitions with mock data."
+          },
+          {
+            "id": 7,
+            "title": "Implement premium feature gating",
+            "description": "Add logic to gate premium features throughout the app based on subscription status.",
+            "dependencies": [
+              "29.6"
+            ],
+            "details": "Create a PremiumGate widget that conditionally renders content. Implement daily lesson limit for free users. Add conversation limit gating. Gate access to advanced practice packs. Restrict higher league tiers for free users. Create premium upsell prompts at gating points.",
+            "status": "pending",
+            "testStrategy": "Test premium gates with both free and premium user states. Verify correct rendering of gated content."
+          },
+          {
+            "id": 8,
+            "title": "Build subscription management screen",
+            "description": "Create a screen for users to manage their subscription status and options.",
+            "dependencies": [
+              "29.6"
+            ],
+            "details": "Implement subscription management UI in settings. Show current plan details and expiration date. Add option to upgrade/downgrade plan. Include cancel subscription button with confirmation. Add link to manage subscription through app store. Display subscription history if available.",
+            "status": "pending",
+            "testStrategy": "UI tests for subscription management screen. Test different subscription states rendering."
+          },
+          {
+            "id": 9,
+            "title": "Implement restore purchases functionality",
+            "description": "Add the ability for users to restore previous purchases when reinstalling or using a new device.",
+            "dependencies": [
+              "29.4",
+              "29.6"
+            ],
+            "details": "Create restore purchases method in SubscriptionService. Implement UI for restore purchases flow with loading state. Handle successful restoration by updating user entitlements. Create error handling for failed restorations. Add analytics for restore purchase events.",
+            "status": "pending",
+            "testStrategy": "Test restore functionality with test accounts. Verify state updates after successful restoration."
+          },
+          {
+            "id": 10,
+            "title": "Add analytics for subscription events",
+            "description": "Implement analytics tracking for all subscription-related events.",
+            "dependencies": [
+              "29.4",
+              "29.7",
+              "29.8",
+              "29.9"
+            ],
+            "details": "Track paywall view events. Log purchase initiated events. Track successful and failed purchases. Monitor subscription cancellations. Track restore purchase attempts and results. Implement funnel analysis for conversion rate. Add custom user properties for subscription status.",
+            "status": "pending",
+            "testStrategy": "Verify analytics events are properly triggered using debug mode. Test analytics with different purchase scenarios."
+          }
+        ]
+      },
+      {
+        "id": 30,
+        "title": "Create Settings, Data Management, and Compliance Features",
+        "description": "Implement app settings, user data management, and regulatory compliance features.",
+        "details": "1. Build settings screen with sections:\n   - Notifications (toggles for reminders, streaks)\n   - Speech (rate slider, voice selection)\n   - Language (locale selector)\n   - Subscription management\n   - Privacy and data\n2. Implement data export functionality (JSON + media links)\n3. Create account deletion flow with confirmation\n4. Add GDPR/CCPA compliance features\n5. Implement recording consent prompts\n6. Create terms and privacy screens\n7. Add accessibility features (WCAG 2.1 AA compliance)\n8. Implement right-to-left language support\n9. Create localization system with Flutter Intl\n10. Add error handling and user feedback mechanisms (snackbars, error screens)\n11. Implement crash reporting with Crashlytics",
+        "testStrategy": "1. Golden tests for settings screens\n2. Integration tests for data export and deletion\n3. Test localization with multiple languages\n4. Accessibility testing with screen readers\n5. Verify error handling with simulated failures",
+        "priority": "medium",
+        "dependencies": [
+          21,
+          22,
+          29
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create Settings Screen UI Structure",
+            "description": "Build the main settings screen with navigation and section layout for all settings categories.",
+            "dependencies": [],
+            "details": "Create a StatefulWidget for the settings screen with a ListView containing sections for notifications, speech, language, subscription, and privacy. Implement a consistent UI pattern with section headers and navigation to subsections. Use Material Design components like ListTile with trailing icons for navigation.",
+            "status": "pending",
+            "testStrategy": "Create golden tests for the settings screen layout. Test navigation to each subsection."
+          },
+          {
+            "id": 2,
+            "title": "Implement Notification Settings",
+            "description": "Create notification preference toggles for reminders and streak notifications.",
+            "dependencies": [
+              "30.1"
+            ],
+            "details": "Build a notification settings screen with toggle switches for different notification types. Use SharedPreferences to persist user choices. Implement the logic to apply these settings to the notification system. Include visual feedback when settings are changed.",
+            "status": "pending",
+            "testStrategy": "Unit test the persistence of notification settings. Integration test to verify notification settings are properly applied."
+          },
+          {
+            "id": 3,
+            "title": "Implement Speech Settings",
+            "description": "Create speech rate slider and voice selection dropdown for TTS configuration.",
+            "dependencies": [
+              "30.1"
+            ],
+            "details": "Build a speech settings screen with a slider for speech rate (0.5x to 2.0x) and a dropdown for voice selection. Connect to the device's available TTS voices. Implement a preview button to test the current settings. Store preferences in SharedPreferences.",
+            "status": "pending",
+            "testStrategy": "Test the speech rate slider ranges and voice selection dropdown population. Verify settings persistence across app restarts."
+          },
+          {
+            "id": 4,
+            "title": "Implement Language and Localization System",
+            "description": "Create language selection UI and implement the localization system using Flutter Intl.",
+            "dependencies": [
+              "30.1"
+            ],
+            "details": "Set up Flutter Intl for localization. Create a language selection screen with a list of supported languages. Implement logic to change app locale based on selection. Extract all hardcoded strings into localization files. Add support for right-to-left languages.",
+            "status": "pending",
+            "testStrategy": "Test language switching functionality. Verify all UI elements adapt properly to RTL layouts. Test with multiple locales to ensure all strings are properly translated."
+          },
+          {
+            "id": 5,
+            "title": "Implement Data Export Functionality",
+            "description": "Create a system to export user data in JSON format with media links.",
+            "dependencies": [
+              "30.1"
+            ],
+            "details": "Build a data export service that collects all user data from local storage and cloud. Generate a structured JSON file with links to media content. Implement file saving functionality with proper permissions handling. Add progress indicators for large exports.",
+            "status": "pending",
+            "testStrategy": "Test export with various data volumes. Verify JSON structure is valid. Test on different platforms to ensure file saving works correctly."
+          },
+          {
+            "id": 6,
+            "title": "Create Account Deletion Flow",
+            "description": "Implement the account deletion process with confirmation steps and data cleanup.",
+            "dependencies": [
+              "30.1",
+              "30.5"
+            ],
+            "details": "Create a multi-step deletion flow with clear warnings about data loss. Implement a confirmation mechanism requiring password re-entry. Build the backend service to delete all user data from both local storage and cloud. Add a final confirmation screen with feedback.",
+            "status": "pending",
+            "testStrategy": "Integration test the complete deletion flow. Verify all user data is properly removed from all storage locations. Test cancellation at different steps."
+          },
+          {
+            "id": 7,
+            "title": "Implement GDPR/CCPA Compliance Features",
+            "description": "Add regulatory compliance features including consent management and privacy controls.",
+            "dependencies": [
+              "30.1",
+              "30.5"
+            ],
+            "details": "Create a consent management system to track user permissions for data collection. Implement privacy controls allowing users to opt out of analytics. Add data retention policy enforcement. Create a cookie/tracking consent banner for web platforms. Ensure all data processing respects user privacy choices.",
+            "status": "pending",
+            "testStrategy": "Verify consent is properly recorded and respected throughout the app. Test opt-out functionality for analytics and tracking."
+          },
+          {
+            "id": 8,
+            "title": "Create Terms and Privacy Screens",
+            "description": "Implement screens displaying terms of service and privacy policy with version tracking.",
+            "dependencies": [
+              "30.1",
+              "30.4"
+            ],
+            "details": "Create dedicated screens for Terms of Service and Privacy Policy. Load content from remote source to allow updates without app releases. Implement version tracking to prompt users when policies change. Add acceptance tracking for legal compliance.",
+            "status": "pending",
+            "testStrategy": "Test remote content loading and fallback to local content. Verify version tracking correctly identifies policy changes."
+          },
+          {
+            "id": 9,
+            "title": "Implement Accessibility Features",
+            "description": "Enhance the app with accessibility features to meet WCAG 2.1 AA compliance.",
+            "dependencies": [
+              "30.1",
+              "30.2",
+              "30.3",
+              "30.4",
+              "30.8"
+            ],
+            "details": "Audit all UI components for accessibility. Add semantic labels to all interactive elements. Ensure proper contrast ratios for text. Implement screen reader compatibility. Add keyboard navigation support. Test with accessibility tools on both iOS and Android.",
+            "status": "pending",
+            "testStrategy": "Test with screen readers on multiple platforms. Verify keyboard navigation works properly. Use automated accessibility testing tools to identify issues."
+          },
+          {
+            "id": 10,
+            "title": "Implement Error Handling and Crash Reporting",
+            "description": "Add comprehensive error handling with user feedback and integrate Crashlytics for crash reporting.",
+            "dependencies": [
+              "30.1",
+              "30.2",
+              "30.3",
+              "30.4",
+              "30.5",
+              "30.6",
+              "30.7",
+              "30.8",
+              "30.9"
+            ],
+            "details": "Implement a global error handling system with appropriate user feedback (snackbars, dialog boxes). Create dedicated error screens for critical failures. Integrate Firebase Crashlytics for crash reporting. Add custom logging for non-fatal errors. Implement a mechanism for users to report issues directly from the app.",
+            "status": "pending",
+            "testStrategy": "Simulate various error conditions to verify proper handling. Test crash reporting by triggering test exceptions. Verify logs contain sufficient context for debugging."
+          }
+        ]
+      }
+    ],
+    "metadata": {
+      "created": "2025-08-12T21:58:44.052Z",
+      "updated": "2025-08-13T11:04:45.303Z",
+      "description": "Tasks for master context"
+    }
+  }
+}
