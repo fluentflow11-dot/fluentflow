@@ -15,19 +15,16 @@
 - .cursor/rules/ – UI rules for professional design in Cursor
 
 ## Task Master status
-- Top-level tasks: IDs 21–30 generated from PRD (21 = setup → 30 = settings/compliance)
-- Completed:
-  - 21.1 Create Flutter project
-  - 21.2 Configure deps/state management (Riverpod, go_router, Hive, Firebase packages)
-  - 21.3 Set up Material 3 theming and design tokens (design tokens + preview wired)
-  - 21.4 Firebase project/app config; Firestore write/read verified on-device
-  - 21.5 Integrate Firebase Core and Authentication (Email/Password + Anonymous)
-  - 21.6 Integrate Firestore and Storage
-  - 21.7 Integrate remaining Firebase services (Remote Config, Crashlytics, App Check)
-  - 21.8 Hive initialization and cache smoke test
-  - 21.9 Configure environment variables and secrets management
-- In progress: 21 (parent)
- - Next task to do: 21.12 Create comprehensive documentation
+- Top-level tasks: IDs 21–30 generated from PRD
+- Completed (21 Setup):
+  - 21.1–21.12 all done (project created, theming, Firebase, Hive, error handling, CI, docs)
+- Epic 22 – Authentication: COMPLETE (except iOS Apple)
+  - Done: 22.1 (Firebase Auth setup), 22.2 (Email/Password), 22.3 (Google Sign-In), 22.5 (Profile flow), 22.6 (Session persistence + secure token store), 22.7 (Age gate), 22.8 (Password reset), 22.9 (Firestore rules deployed), 22.10 (Analytics events)
+  - Deferred: 22.4 (Apple Sign‑In for iOS)
+- Current epic: 23 Onboarding Experience
+  - Done: 23.1 (Intro), 23.2 (Wizard scaffold + progress), 23.3 (Account step), 23.4 (Goals + Level steps), 23.5 (Schedule), 23.6 (Permissions – Notifications/Microphone)
+  - In progress: 23.8 (Navigation + state persistence finalization)
+  - Next: 23.9 (Validation + Skip), 23.10 (Analytics tracking + final completion)
 
 Quick commands
 ```bash
@@ -35,14 +32,9 @@ Quick commands
 npx -y task-master list --with-subtasks
 npx -y task-master next
 
-# Mark status
-npx -y task-master set-status --id=21 --status=in-progress
-npx -y task-master set-status --id=21.2 --status=done
-
-# Helpful for current focus (21.5)
-# Helpful for current focus (21.12)
-npx -y task-master show 21.12
-npx -y task-master set-status --id=21.12 --status=in-progress
+# Mark status for current epic
+npx -y task-master set-status --id=23 --status=in-progress
+npx -y task-master show 23.8,23.9,23.10
 ```
 
 ## Run instructions (Android device)
@@ -58,6 +50,7 @@ Notes
 - Android config pinned for Firebase:
   - mobile_app/android/app/build.gradle.kts → minSdk = 23, ndkVersion = 27.0.12077973
 - First launch logs may show “Skipped frames” and ion driver messages; acceptable in debug.
+- Windows: Developer Mode should be ON (enables symlinks for Flutter plugins).
 
 ## Single-terminal workflow (Windows PowerShell)
 
@@ -83,6 +76,14 @@ Tips
 - Themes: Material 3 with design tokens in `lib/core/theme.dart`; preview on HomeScreen
 - Hive: initialized via `initializeHive()`, boxes `app_prefs` and `cache` opened at startup
 - Firebase: Android app registered; `google-services.json` present; initialization works via default resources; Firestore verified
+- Firestore rules: locked down; `users/{uid}/**` only accessible to the authenticated `uid`; `debug/**` only for authed users
+- Auth session persistence: secure token storage with `flutter_secure_storage`, automatic refresh
+- Age gate: `/age-gate` screen + enforced redirects
+- Onboarding: intro + multi-step wizard (Account, Goals, Level, Schedule, Permissions)
+- Onboarding persistence: selections saved in Hive; final completion toggles `onboard_complete=true`
+- Analytics: auth + onboarding events recorded (DebugView works when ADB debug mode is enabled)
+- Debug tools on Home: Reset age gate, Open onboarding intro, Reset onboarding, Firestore read/write test
+- Theme swatches on Home: interactive seed color selection persisted in Hive
 
 ## PRD highlights
 - Flows: Onboarding, Home/Daily Lessons, Conversation, Pronunciation, Grammar Tiles, Practice, League, Account/Settings/Achievements
@@ -95,13 +96,15 @@ Tips
 - Firebase App Check API: enable it in Google Cloud for this project to remove debug App Check warnings.
 
 ## Known/pending
+- iOS Apple Sign‑In (22.4) – deferred
+- Onboarding: 23.8 finalize navigation/state, 23.9 add validation/skip, 23.10 add completion analytics polish
 - Documentation (21.12): consolidate run instructions, debugging tips, architecture overview
 - Caching strategy expansion (content/offline) later in tasks 27.x
 
 ## How to continue (new chat)
 1) Open this file for context.
-2) Run `npx -y task-master next` to confirm the next actionable item.
-3) Implement 21.12 (documentation): add architecture/flows, run/debug instructions, and contribution guide.
+2) Run `npx -y task-master next` to confirm the next actionable item (should surface 23.8/23.9/23.10).
+3) Proceed to complete onboarding (23.8 → 23.9 → 23.10). Then revisit 22.4 (iOS Apple Sign‑In) when targeting iOS.
 4) Keep analyzer/build green; run on device from `mobile_app`.
 
 ## Collaboration mode (owner is a novice)

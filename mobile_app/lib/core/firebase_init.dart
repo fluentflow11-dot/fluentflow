@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
@@ -15,6 +16,10 @@ Future<bool> initializeFirebaseIfAvailable() async {
 			// ignore: avoid_print
 			print('[Firebase] Initialized (default resources)');
 		}
+		// Set auth persistence for web; no-op on mobile
+		try {
+			await FirebaseAuth.instance.setPersistence(Persistence.LOCAL);
+		} catch (_) {}
 		return true;
 	} catch (_) {
 		// Fall through to generated options
@@ -28,6 +33,10 @@ Future<bool> initializeFirebaseIfAvailable() async {
 			// ignore: avoid_print
 			print('[Firebase] Initialized (generated options)');
 		}
+		// Set auth persistence for web; no-op on mobile
+		try {
+			await FirebaseAuth.instance.setPersistence(Persistence.LOCAL);
+		} catch (_) {}
 		return true;
 	} catch (e) {
 		if (kDebugMode) {

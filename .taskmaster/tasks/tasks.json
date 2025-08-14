@@ -9,7 +9,7 @@
         "testStrategy": "1. Verify Firebase services connection with test credentials\n2. Run integration tests to confirm project structure and architecture\n3. Test navigation routes and deep links\n4. Verify CI/CD pipeline with sample commits\n5. Test offline caching with Hive",
         "priority": "high",
         "dependencies": [],
-        "status": "in-progress",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -165,7 +165,7 @@
         "dependencies": [
           21
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -173,7 +173,7 @@
             "description": "Initialize Firebase in the application and configure the Firebase Authentication module with the necessary dependencies and configuration.",
             "dependencies": [],
             "details": "1. Add Firebase dependencies to pubspec.yaml\n2. Create a firebase_options.dart file using FlutterFire CLI\n3. Initialize Firebase in main.dart\n4. Configure Firebase Authentication in the app\n5. Set up an AuthService class as a singleton to handle authentication operations\n6. Implement basic error handling for authentication failures",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Create unit tests for AuthService initialization and mock Firebase Authentication"
           },
           {
@@ -184,7 +184,7 @@
               "22.1"
             ],
             "details": "1. Create registration screen with email, password, and confirm password fields\n2. Implement form validation for email format and password strength\n3. Add createUserWithEmailAndPassword Firebase method in AuthService\n4. Create login screen with email and password fields\n5. Implement signInWithEmailAndPassword Firebase method in AuthService\n6. Add loading states during authentication processes\n7. Implement proper error handling and user feedback",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Unit test email validation and password strength checks. Integration tests for the registration and login flows."
           },
           {
@@ -195,7 +195,7 @@
               "22.1"
             ],
             "details": "1. Add google_sign_in package to pubspec.yaml\n2. Configure Google Sign-In in Firebase console\n3. Set up OAuth client IDs in Google Cloud Console\n4. Add necessary configurations to Android (google-services.json) and iOS (GoogleService-Info.plist) projects\n5. Implement signInWithGoogle method in AuthService\n6. Create UI components for Google Sign-In button\n7. Handle account linking if email already exists",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Test Google Sign-In flow with test accounts. Verify proper error handling when network issues occur."
           },
           {
@@ -206,7 +206,7 @@
               "22.1"
             ],
             "details": "1. Add sign_in_with_apple package to pubspec.yaml\n2. Configure Apple Sign-In capability in Xcode\n3. Set up Apple Developer account with Sign in with Apple enabled\n4. Create Apple Sign-In button that only appears on iOS devices\n5. Implement signInWithApple method in AuthService\n6. Handle account linking if email already exists\n7. Ensure proper error handling for Apple authentication failures",
-            "status": "pending",
+            "status": "deferred",
             "testStrategy": "Test Apple Sign-In on physical iOS devices. Verify the button is hidden on Android devices."
           },
           {
@@ -219,7 +219,7 @@
               "22.4"
             ],
             "details": "1. Create a UserProfile model class\n2. Design and implement profile creation screen\n3. Add fields for name, age/birthdate, profile picture, and preferences\n4. Implement Firestore integration to store user profile data\n5. Create a ProfileService to handle profile operations\n6. Add validation for required fields\n7. Implement profile picture upload to Firebase Storage\n8. Add progress indicator during profile creation",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Test profile creation with various input combinations. Verify data is correctly stored in Firestore."
           },
           {
@@ -232,7 +232,7 @@
               "22.4"
             ],
             "details": "1. Configure Firebase Auth persistence settings\n2. Implement a token refresh mechanism using Firebase's tokenChanges stream\n3. Create an authentication state listener in the app\n4. Implement secure token storage using flutter_secure_storage\n5. Add auto-login functionality on app start\n6. Handle expired tokens and silent refresh\n7. Create a user session timeout for security (optional)\n8. Implement proper error handling for token refresh failures",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Test session persistence across app restarts. Verify token refresh works correctly when tokens expire."
           },
           {
@@ -243,7 +243,7 @@
               "22.5"
             ],
             "details": "1. Design and implement an age gate screen shown before authentication\n2. Create birthdate input with appropriate validation\n3. Implement logic to determine if user is under 13\n4. For users under 13, implement parental consent flow\n5. Store age verification status in user profile\n6. Implement feature restrictions for underage users\n7. Add privacy policy acknowledgment for all users\n8. Create admin dashboard for parental consent verification (if needed)",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Test age verification with various birthdates. Verify COPPA restrictions are properly applied for underage users."
           },
           {
@@ -254,7 +254,7 @@
               "22.2"
             ],
             "details": "1. Design and implement password reset screen\n2. Add sendPasswordResetEmail method to AuthService\n3. Create email verification flow for new accounts\n4. Implement email verification status checking\n5. Add UI for resending verification emails\n6. Create account recovery flow for locked accounts\n7. Implement proper error handling and user feedback\n8. Add rate limiting for password reset attempts for security",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Test password reset flow end-to-end. Verify email verification works correctly."
           },
           {
@@ -266,7 +266,7 @@
               "22.6"
             ],
             "details": "1. Design security rules structure for user profiles and data\n2. Implement rules that restrict access to user's own data\n3. Create admin role with special permissions\n4. Test rules using Firebase emulator\n5. Implement rules for shared resources\n6. Add validation rules to ensure data integrity\n7. Create documentation for security rules\n8. Deploy rules to production environment",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Test security rules using Firebase emulator. Verify unauthorized access is properly blocked."
           },
           {
@@ -280,7 +280,7 @@
               "22.8"
             ],
             "details": "1. Configure Firebase Analytics in the app\n2. Define key authentication events to track\n3. Implement analytics logging for sign-up, sign-in, and sign-out events\n4. Add tracking for authentication errors and failures\n5. Implement conversion tracking for completed registrations\n6. Create custom parameters for authentication methods used\n7. Set up funnels in Firebase Analytics console\n8. Implement privacy-compliant analytics for underage users",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Verify analytics events are properly triggered during authentication flows. Test with Firebase Analytics debug view."
           }
         ]
@@ -295,7 +295,7 @@
         "dependencies": [
           22
         ],
-        "status": "pending",
+        "status": "in-progress",
         "subtasks": [
           {
             "id": 1,
@@ -303,7 +303,7 @@
             "description": "Design and implement the initial onboarding screen that displays the app's value proposition and a prominent 'Begin' button to start the onboarding process.",
             "dependencies": [],
             "details": "Create a responsive screen with app logo, compelling headline, brief value proposition text, and a prominent CTA button. Implement with appropriate layout constraints for different screen sizes. Use animation for the button to draw attention.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Create golden tests for the intro screen layout. Test responsiveness on different screen sizes. Verify button action navigates to the first wizard step."
           },
           {
@@ -314,7 +314,7 @@
               "23.1"
             ],
             "details": "Develop a reusable wizard container component with header, body area, and navigation footer. Implement a progress indicator showing 6 steps with the current step highlighted. Create transitions between steps with appropriate animations.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Test wizard navigation between steps. Verify progress indicator updates correctly. Test accessibility of the wizard framework."
           },
           {
@@ -325,7 +325,7 @@
               "23.2"
             ],
             "details": "Create form with email/password fields, social login options, and validation. Implement account creation API integration. Add error handling for network issues and validation errors. Include 'Terms of Service' and 'Privacy Policy' checkboxes with links.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Test form validation for all fields. Test successful and failed login/signup scenarios. Verify error messages display correctly."
           },
           {
@@ -336,7 +336,7 @@
               "23.3"
             ],
             "details": "Implement two separate wizard steps: one for goal selection (using selectable chips with icons) and one for level selection (beginner, intermediate, advanced). Store selections in the onboarding state. Add descriptions for each option to help users make informed choices.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Test selection and deselection of chips. Verify state persistence when navigating between steps. Test accessibility of chip components."
           },
           {
@@ -347,7 +347,7 @@
               "23.4"
             ],
             "details": "Build a calendar-style interface for selecting days of the week and a time picker for selecting preferred time slots. Include options for reminder frequency. Store schedule preferences in the onboarding state.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Test day selection and deselection. Verify time picker functionality. Test edge cases like selecting no days or times."
           },
           {
@@ -358,7 +358,7 @@
               "23.5"
             ],
             "details": "Implement two separate steps: one for notification permissions and one for microphone permissions. Include explanatory text about why permissions are needed and how they improve the user experience. Add platform-specific permission request handling.",
-            "status": "pending",
+            "status": "in-progress",
             "testStrategy": "Test permission flows for both grant and deny scenarios. Verify appropriate fallbacks when permissions are denied. Test on both iOS and Android platforms."
           },
           {
@@ -385,7 +385,7 @@
               "23.7"
             ],
             "details": "Create navigation buttons at the bottom of each step. Implement state management to persist all user selections. Add logic to handle back navigation and step skipping where applicable. Implement local storage for resuming onboarding if the app is closed.",
-            "status": "pending",
+            "status": "in-progress",
             "testStrategy": "Test navigation between all steps. Verify state persistence when navigating back and forth. Test app closure during onboarding and verify correct resumption."
           },
           {
@@ -1318,7 +1318,7 @@
     ],
     "metadata": {
       "created": "2025-08-12T21:58:44.052Z",
-      "updated": "2025-08-13T11:13:43.510Z",
+      "updated": "2025-08-14T16:43:10.956Z",
       "description": "Tasks for master context"
     }
   }

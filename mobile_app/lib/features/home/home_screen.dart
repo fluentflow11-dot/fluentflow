@@ -5,10 +5,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../core/design_tokens.dart';
 import '../../core/hive_init.dart';
 import '../../core/auth_providers.dart';
+import '../../core/analytics.dart';
+import '../../core/theme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../core/storage_debug.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:go_router/go_router.dart';
+import '../onboarding/onboarding_steps.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -21,12 +25,26 @@ class HomeScreen extends ConsumerWidget {
         actions: [
           Consumer(builder: (context, ref, _) {
             final auth = ref.watch(authServiceProvider);
+            final analytics = ref.watch(appAnalyticsProvider);
             return IconButton(
               icon: const Icon(Icons.logout),
               tooltip: 'Sign out',
               onPressed: () async {
+                final confirmed = await showDialog<bool>(
+                  context: context,
+                  builder: (ctx) => AlertDialog(
+                    title: const Text('Sign out?'),
+                    content: const Text('You will need to sign in again to continue.'),
+                    actions: [
+                      TextButton(onPressed: () => Navigator.of(ctx).pop(false), child: const Text('Cancel')),
+                      FilledButton(onPressed: () => Navigator.of(ctx).pop(true), child: const Text('Sign out')),
+                    ],
+                  ),
+                );
+                if (confirmed != true) return;
                 try {
                   await auth.signOut();
+                  await analytics.logLogout();
                 } catch (e) {
                   if (!context.mounted) return;
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Sign-out error: $e')));
@@ -48,18 +66,26 @@ class HomeScreen extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // Session status
+                    Builder(builder: (context) {
+                      final user = FirebaseAuth.instance.currentUser;
+                      final label = user == null
+                          ? 'Not signed in'
+                          : (user.isAnonymous ? 'Signed in (guest)' : 'Signed in as ${user.email ?? user.uid}');
+                      return Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.all(context.spacing.md),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.surfaceContainerHigh,
+                          borderRadius: context.radii.brMd,
+                        ),
+                        child: Text(label),
+                      );
+                    }),
+                    SizedBox(height: context.spacing.lg),
                     Text('Theme Preview', style: Theme.of(context).textTheme.headlineMedium),
                     SizedBox(height: context.spacing.md),
-                    Wrap(
-                      spacing: context.spacing.md,
-                      runSpacing: context.spacing.md,
-                      children: [
-                        _ColorSwatchBox(label: 'Primary', color: Theme.of(context).colorScheme.primary),
-                        _ColorSwatchBox(label: 'Secondary', color: Theme.of(context).colorScheme.secondary),
-                        _ColorSwatchBox(label: 'Tertiary', color: Theme.of(context).colorScheme.tertiary),
-                        _ColorSwatchBox(label: 'Surface', color: Theme.of(context).colorScheme.surface),
-                      ],
-                    ),
+                    _InteractiveSwatches(),
                     SizedBox(height: context.spacing.lg),
                     ElevatedButton(
                       onPressed: () {},
@@ -161,6 +187,101 @@ class HomeScreen extends ConsumerWidget {
                       label: const Text('Debug: Download from Storage'),
                     ),
                     SizedBox(height: context.spacing.md),
+                    // Verify users/{uid} read/write with current auth
+                    FilledButton.icon(
+                      onPressed: () async {
+                        if (!kDebugMode) return;
+                        final scaffold = ScaffoldMessenger.of(context);
+                        try {
+                          final user = FirebaseAuth.instance.currentUser;
+                          if (user == null) {
+                            scaffold.showSnackBar(const SnackBar(content: Text('No user; sign in first')));
+                            return;
+                          }
+                          final uid = user.uid;
+                          final now = DateTime.now().toIso8601String();
+                          await FirebaseFirestore.instance.collection('users').doc(uid).set({
+                            'uid': uid,
+                            'lastDebugWrite': now,
+                          }, SetOptions(merge: true));
+                          final snap = await FirebaseFirestore.instance.collection('users').doc(uid).get();
+                          scaffold.showSnackBar(SnackBar(content: Text('users/$uid OK: ${snap.data()}')));
+                        } catch (e) {
+                          scaffold.showSnackBar(SnackBar(content: Text('users/{uid} error: $e')));
+                        }
+                      },
+                      icon: const Icon(Icons.person),
+                      label: const Text('Debug: Test users/{uid} read/write'),
+                    ),
+                    SizedBox(height: context.spacing.md),
+                    // Reset age gate and show it again
+                    FilledButton.icon(
+                      onPressed: () async {
+                        if (!kDebugMode) return;
+                        final cache = ref.read(appCacheProvider);
+                        await cache.setPref('age_gate_verified', false);
+                        await cache.setPref('birthdate_millis', null);
+                        if (!context.mounted) return;
+                        context.go('/age-gate');
+                      },
+                      icon: const Icon(Icons.refresh),
+                      label: const Text('Debug: Reset age gate'),
+                    ),
+                    SizedBox(height: context.spacing.md),
+                    // Open onboarding intro screen
+                    FilledButton.icon(
+                      onPressed: () {
+                        if (!kDebugMode) return;
+                        context.go('/onboarding-intro');
+                      },
+                      icon: const Icon(Icons.rocket_launch_outlined),
+                      label: const Text('Debug: Open onboarding intro'),
+                    ),
+                    SizedBox(height: context.spacing.md),
+                    // Reset onboarding completion and preferences
+                    FilledButton.icon(
+                      onPressed: () async {
+                        if (!kDebugMode) return;
+                        final cache = ref.read(appCacheProvider);
+                        await cache.setPref('onboard_complete', false);
+                        await cache.setPref('onboard_level', null);
+                        await cache.setPref('onboard_days', <String>[]);
+                        await cache.setPref('onboard_time_minutes', null);
+                        await cache.setPref('onboard_notifications', false);
+                        await cache.setPref('onboard_microphone', false);
+                        // Also reset in-memory state providers
+                        ref.read(onboardingGoalsProvider.notifier).state = <String>[];
+                        ref.read(onboardingLevelProvider.notifier).state = null;
+                        ref.read(onboardingDaysProvider.notifier).state = <String>[];
+                        ref.read(onboardingTimeMinutesProvider.notifier).state = 18 * 60;
+                        ref.read(onboardingNotificationsGrantedProvider.notifier).state = false;
+                        ref.read(onboardingMicrophoneAllowedProvider.notifier).state = false;
+                        if (!context.mounted) return;
+                        context.go('/onboarding-intro');
+                      },
+                      icon: const Icon(Icons.restart_alt),
+                      label: const Text('Debug: Reset onboarding'),
+                    ),
+                    SizedBox(height: context.spacing.md),
+                    // Show cached token prefix (debug)
+                    Consumer(builder: (context, ref, _) {
+                      return FilledButton.icon(
+                        onPressed: () async {
+                          if (!kDebugMode) return;
+                          final scaffold = ScaffoldMessenger.of(context);
+                          try {
+                            final token = await ref.read(authSessionManagerProvider).readCachedIdToken();
+                            final prefix = (token == null || token.length < 12) ? token ?? '(none)' : '${token.substring(0, 12)}...';
+                            scaffold.showSnackBar(SnackBar(content: Text('Cached ID token: $prefix')));
+                          } catch (e) {
+                            scaffold.showSnackBar(SnackBar(content: Text('Token read error: $e')));
+                          }
+                        },
+                        icon: const Icon(Icons.vpn_key),
+                        label: const Text('Debug: Show cached token prefix'),
+                      );
+                    }),
+                    SizedBox(height: context.spacing.md),
                     FilledButton.icon(
                       onPressed: () async {
                         if (!kDebugMode) return;
@@ -215,6 +336,34 @@ class _ColorSwatchBox extends StatelessWidget {
               ),
         ),
       ),
+    );
+  }
+}
+
+class _InteractiveSwatches extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final options = [
+      {'label': 'Blue', 'color': Colors.blue},
+      {'label': 'Purple', 'color': Colors.deepPurple},
+      {'label': 'Green', 'color': Colors.green},
+      {'label': 'Orange', 'color': Colors.deepOrange},
+    ];
+    return Wrap(
+      spacing: context.spacing.md,
+      runSpacing: context.spacing.md,
+      children: options.map((opt) {
+        final color = opt['color'] as Color;
+        final label = opt['label'] as String;
+        return InkWell(
+          onTap: () async {
+            ref.read(seedColorProvider.notifier).state = color;
+            await ref.read(appCacheProvider).setPref('theme_seed', color.value);
+          },
+          borderRadius: context.radii.brSm,
+          child: _ColorSwatchBox(label: '$label (tap to apply)', color: color),
+        );
+      }).toList(),
     );
   }
 }
