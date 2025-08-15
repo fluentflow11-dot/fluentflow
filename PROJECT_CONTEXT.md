@@ -1,6 +1,6 @@
 # FluentFlow – Project Context (for new chats)
 
-## What we’re building
+## What we're building
 - Loora AI–inspired English learning app
 - Tech: Flutter (stable), Firebase (Auth, Firestore, Storage, Remote Config, Messaging, Analytics, Crashlytics, App Check), Riverpod, go_router, Hive
 - Platform: Android first (Play Store), web/windows dev targets available
@@ -21,10 +21,11 @@
 - Epic 22 – Authentication: COMPLETE (except iOS Apple)
   - Done: 22.1 (Firebase Auth setup), 22.2 (Email/Password), 22.3 (Google Sign-In), 22.5 (Profile flow), 22.6 (Session persistence + secure token store), 22.7 (Age gate), 22.8 (Password reset), 22.9 (Firestore rules deployed), 22.10 (Analytics events)
   - Deferred: 22.4 (Apple Sign‑In for iOS)
-- Current epic: 23 Onboarding Experience
-  - Done: 23.1 (Intro), 23.2 (Wizard scaffold + progress), 23.3 (Account step), 23.4 (Goals + Level steps), 23.5 (Schedule), 23.6 (Permissions – Notifications/Microphone)
-  - In progress: 23.8 (Navigation + state persistence finalization)
-  - Next: 23.9 (Validation + Skip), 23.10 (Analytics tracking + final completion)
+- Epic 23 – Onboarding Experience: COMPLETE ✅
+  - Done: 23.1 (Intro), 23.2 (Wizard scaffold + progress), 23.3 (Account step), 23.4 (Goals + Level steps), 23.5 (Schedule), 23.6 (Permissions – Notifications/Microphone), 23.7 (Language selection), 23.8 (Navigation + state persistence), 23.9 (Validation + Skip), 23.10 (Analytics tracking + final completion)
+- Current epic: 24 Home Screen Development
+  - Done: 24.1 (Create Home Screen Layout UI Components - baseline UI with welcome header, progress card, categories grid)
+  - Next: 24.2 (Implement Daily Lesson Card), 24.3 (Add Progress Tracking), 24.4 (Create Navigation to Other Screens)
 
 Quick commands
 ```bash
@@ -33,8 +34,8 @@ npx -y task-master list --with-subtasks
 npx -y task-master next
 
 # Mark status for current epic
-npx -y task-master set-status --id=23 --status=in-progress
-npx -y task-master show 23.8,23.9,23.10
+npx -y task-master set-status --id=24 --status=in-progress
+npx -y task-master show 24.2,24.3,24.4
 ```
 
 ## Run instructions (Android device)
@@ -49,7 +50,7 @@ cd mobile_app
 Notes
 - Android config pinned for Firebase:
   - mobile_app/android/app/build.gradle.kts → minSdk = 23, ndkVersion = 27.0.12077973
-- First launch logs may show “Skipped frames” and ion driver messages; acceptable in debug.
+- First launch logs may show "Skipped frames" and ion driver messages; acceptable in debug.
 - Windows: Developer Mode should be ON (enables symlinks for Flutter plugins).
 
 ## Single-terminal workflow (Windows PowerShell)
@@ -67,7 +68,7 @@ C:\Users\USER1\fluentflow\.flutter-sdk\bin\flutter.bat run -d FUBYIJMJX86DJNPZ -
 ```
 
 Tips
-- Don’t chain commands with `&&`; run them one-by-one in this PS version.
+- Don't chain commands with `&&`; run them one-by-one in this PS version.
 - If relative paths fail, use the absolute Flutter path shown above.
 
 ## What is already wired
@@ -79,11 +80,13 @@ Tips
 - Firestore rules: locked down; `users/{uid}/**` only accessible to the authenticated `uid`; `debug/**` only for authed users
 - Auth session persistence: secure token storage with `flutter_secure_storage`, automatic refresh
 - Age gate: `/age-gate` screen + enforced redirects
-- Onboarding: intro + multi-step wizard (Account, Goals, Level, Schedule, Permissions)
+- Onboarding: intro + multi-step wizard (Account, Goals, Level, Schedule, Permissions, Language) with full persistence and analytics
 - Onboarding persistence: selections saved in Hive; final completion toggles `onboard_complete=true`
-- Analytics: auth + onboarding events recorded (DebugView works when ADB debug mode is enabled)
+- Onboarding analytics: step views, durations, skips, completion events tracked
+- Home Screen: baseline UI with welcome header, progress card, categories grid (Daily Lesson, Conversation, etc.)
 - Debug tools on Home: Reset age gate, Open onboarding intro, Reset onboarding, Firestore read/write test
 - Theme swatches on Home: interactive seed color selection persisted in Hive
+- Permissions: Notifications (Firebase Messaging) and Microphone (permission_handler) with runtime requests
 
 ## PRD highlights
 - Flows: Onboarding, Home/Daily Lessons, Conversation, Pronunciation, Grammar Tiles, Practice, League, Account/Settings/Achievements
@@ -97,14 +100,14 @@ Tips
 
 ## Known/pending
 - iOS Apple Sign‑In (22.4) – deferred
-- Onboarding: 23.8 finalize navigation/state, 23.9 add validation/skip, 23.10 add completion analytics polish
+- Home Screen: 24.2 (Daily Lesson Card), 24.3 (Progress Tracking), 24.4 (Navigation to Other Screens)
 - Documentation (21.12): consolidate run instructions, debugging tips, architecture overview
 - Caching strategy expansion (content/offline) later in tasks 27.x
 
 ## How to continue (new chat)
 1) Open this file for context.
-2) Run `npx -y task-master next` to confirm the next actionable item (should surface 23.8/23.9/23.10).
-3) Proceed to complete onboarding (23.8 → 23.9 → 23.10). Then revisit 22.4 (iOS Apple Sign‑In) when targeting iOS.
+2) Run `npx -y task-master next` to confirm the next actionable item (should surface 24.2/24.3/24.4).
+3) Proceed to complete Home Screen development (24.2 → 24.3 → 24.4). Then revisit 22.4 (iOS Apple Sign‑In) when targeting iOS.
 4) Keep analyzer/build green; run on device from `mobile_app`.
 
 ## Collaboration mode (owner is a novice)

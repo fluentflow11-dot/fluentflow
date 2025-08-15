@@ -55,8 +55,8 @@ class _AgeGateScreenState extends ConsumerState<AgeGateScreen> {
       await cache.setPref('age_gate_verified', true);
       await cache.setPref('birthdate_millis', _birthdate!.millisecondsSinceEpoch);
       if (!mounted) return;
-      // Move to root; router redirect will send to auth or home as appropriate
-      context.go('/');
+      // Move to onboarding intro explicitly to avoid redirect loops
+      context.go('/onboarding-intro');
     } finally {
       if (mounted) setState(() => _saving = false);
     }

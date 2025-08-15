@@ -52,6 +52,20 @@ class AppAnalytics {
   Future<void> logOnboardingResume() async {
     await _analytics.logEvent(name: 'onboarding_resume');
   }
+
+  Future<void> logOnboardingStepDuration({required String step, required int durationMs}) async {
+    await _analytics.logEvent(name: 'onboarding_step_duration', parameters: {
+      'step': step,
+      'duration_ms': durationMs,
+    });
+  }
+
+  Future<void> logOnboardingTotalDuration({required int totalDurationMs, required int stepsSkipped}) async {
+    await _analytics.logEvent(name: 'onboarding_total_duration', parameters: {
+      'total_ms': totalDurationMs,
+      'skipped': stepsSkipped,
+    });
+  }
 }
 
 final analyticsProvider = Provider<FirebaseAnalytics>((ref) => FirebaseAnalytics.instance);

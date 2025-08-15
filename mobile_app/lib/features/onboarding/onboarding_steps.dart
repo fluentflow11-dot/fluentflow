@@ -5,6 +5,7 @@ import '../../core/design_tokens.dart';
 import '../../core/auth_providers.dart';
 import '../../core/hive_init.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 // ----- Goals Step -----
 
@@ -303,9 +304,12 @@ class NotificationsStepContent extends ConsumerWidget {
                     settings.authorizationStatus == AuthorizationStatus.provisional;
                 ref.read(onboardingNotificationsGrantedProvider.notifier).state = ok;
                 await ref.read(appCacheProvider).setPref('onboard_notifications', ok);
-              } catch (_) {
-                // no-op; keep current
-              }
+                if (!ok && context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Notifications disabled. You can enable them later in Settings.')),
+                  );
+                }
+              } catch (_) {}
             },
             borderRadius: BorderRadius.all(RadiusTheme().md),
             child: Container(
@@ -336,6 +340,96 @@ final onboardingMicrophoneAllowedProvider = StateProvider<bool>((ref) {
   return cache.getPref<bool>('onboard_microphone') ?? false;
 });
 
+// ----- Language Step -----
+
+final onboardingLanguageProvider = StateProvider<String?>((ref) {
+  final cache = ref.read(appCacheProvider);
+  return cache.getPref<String>('onboard_language');
+});
+
+class LanguageStepContent extends ConsumerStatefulWidget {
+  const LanguageStepContent({super.key});
+
+  @override
+  ConsumerState<LanguageStepContent> createState() => _LanguageStepContentState();
+}
+
+class _LanguageStepContentState extends ConsumerState<LanguageStepContent> {
+  String _query = '';
+
+  static const List<Map<String, String>> langs = [
+    {'code': 'en', 'label': 'English'},
+    {'code': 'es', 'label': 'Spanish'},
+    {'code': 'ar', 'label': 'Arabic'},
+    {'code': 'fr', 'label': 'French'},
+    {'code': 'de', 'label': 'German'},
+    {'code': 'pt', 'label': 'Portuguese'},
+    {'code': 'hi', 'label': 'Hindi'},
+    {'code': 'zh', 'label': 'Chinese'},
+    {'code': 'ja', 'label': 'Japanese'},
+    {'code': 'ko', 'label': 'Korean'},
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    final selected = ref.watch(onboardingLanguageProvider);
+    final filtered = langs
+        .where((l) => _query.isEmpty || l['label']!.toLowerCase().contains(_query.toLowerCase()))
+        .toList();
+    final scheme = Theme.of(context).colorScheme;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Choose your language', style: Theme.of(context).textTheme.titleLarge),
+        SizedBox(height: context.spacing.md),
+        TextField(
+          decoration: const InputDecoration(prefixIcon: Icon(Icons.search), labelText: 'Search languages'),
+          onChanged: (v) => setState(() => _query = v.trim()),
+        ),
+        SizedBox(height: context.spacing.md),
+        Expanded(
+          child: ListView.separated(
+            itemCount: filtered.length,
+            separatorBuilder: (_, __) => SizedBox(height: context.spacing.xs),
+            itemBuilder: (context, index) {
+              final lang = filtered[index];
+              final isSelected = selected == lang['code'];
+              final cardColor = isSelected ? scheme.primaryContainer : scheme.surfaceContainerLowest;
+              final borderColor = isSelected ? scheme.primary : scheme.outlineVariant;
+              return Material(
+                color: Colors.transparent,
+                borderRadius: BorderRadius.all(RadiusTheme().md),
+                child: InkWell(
+                  onTap: () async {
+                    ref.read(onboardingLanguageProvider.notifier).state = lang['code'];
+                    await ref.read(appCacheProvider).setPref('onboard_language', lang['code']);
+                  },
+                  borderRadius: BorderRadius.all(RadiusTheme().md),
+                  child: Container(
+                    padding: EdgeInsets.all(context.spacing.md),
+                    decoration: BoxDecoration(
+                      color: cardColor,
+                      borderRadius: BorderRadius.all(RadiusTheme().md),
+                      border: Border.all(color: borderColor, width: 1),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(lang['label']!, style: Theme.of(context).textTheme.titleMedium),
+                        if (isSelected) Icon(Icons.check_circle, color: scheme.primary),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 class MicrophoneStepContent extends ConsumerWidget {
   const MicrophoneStepContent({super.key});
 
@@ -355,10 +449,17 @@ class MicrophoneStepContent extends ConsumerWidget {
           borderRadius: BorderRadius.all(RadiusTheme().md),
           child: InkWell(
             onTap: () async {
-              // Placeholder: toggle preference. Real mic prompt will be added with recording feature.
-              final next = !allowed;
-              ref.read(onboardingMicrophoneAllowedProvider.notifier).state = next;
-              await ref.read(appCacheProvider).setPref('onboard_microphone', next);
+              try {
+                final status = await Permission.microphone.request();
+                final ok = status.isGranted;
+                ref.read(onboardingMicrophoneAllowedProvider.notifier).state = ok;
+                await ref.read(appCacheProvider).setPref('onboard_microphone', ok);
+                if (!ok && context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Microphone permission denied. You can enable it later in Settings.')),
+                  );
+                }
+              } catch (_) {}
             },
             borderRadius: BorderRadius.all(RadiusTheme().md),
             child: Container(

@@ -295,7 +295,7 @@
         "dependencies": [
           22
         ],
-        "status": "in-progress",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -358,7 +358,7 @@
               "23.5"
             ],
             "details": "Implement two separate steps: one for notification permissions and one for microphone permissions. Include explanatory text about why permissions are needed and how they improve the user experience. Add platform-specific permission request handling.",
-            "status": "in-progress",
+            "status": "done",
             "testStrategy": "Test permission flows for both grant and deny scenarios. Verify appropriate fallbacks when permissions are denied. Test on both iOS and Android platforms."
           },
           {
@@ -369,7 +369,7 @@
               "23.6"
             ],
             "details": "Implement a searchable list of supported languages/locales with native language names and flags. Apply selected language immediately to demonstrate the change. Store language preference and apply it app-wide.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Test language selection and immediate application. Verify search functionality works correctly. Test RTL language selection and layout changes."
           },
           {
@@ -385,7 +385,7 @@
               "23.7"
             ],
             "details": "Create navigation buttons at the bottom of each step. Implement state management to persist all user selections. Add logic to handle back navigation and step skipping where applicable. Implement local storage for resuming onboarding if the app is closed.",
-            "status": "in-progress",
+            "status": "done",
             "testStrategy": "Test navigation between all steps. Verify state persistence when navigating back and forth. Test app closure during onboarding and verify correct resumption."
           },
           {
@@ -396,7 +396,7 @@
               "23.8"
             ],
             "details": "Add validation logic for each step with appropriate error messages. Identify which steps can be skipped and implement skip buttons with confirmation dialogs where needed. Ensure validation runs before proceeding to the next step.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Test validation for all required fields. Verify skip functionality works correctly. Test edge cases like skipping multiple steps."
           },
           {
@@ -407,7 +407,7 @@
               "23.9"
             ],
             "details": "Integrate analytics to track step views, completions, skips, and time spent on each step. Create events for onboarding start and completion. Implement final transition animation from onboarding to main app. Add logic to prevent onboarding from showing again for completed users.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Verify analytics events fire correctly for each step. Test complete onboarding flow end-to-end. Verify users aren't shown onboarding again after completion."
           }
         ]
@@ -423,7 +423,7 @@
           21,
           22
         ],
-        "status": "pending",
+        "status": "in-progress",
         "subtasks": [
           {
             "id": 1,
@@ -431,7 +431,7 @@
             "description": "Implement the basic UI components for the home screen including progress ring, lesson category cards, streak indicator, and CTAs.",
             "dependencies": [],
             "details": "Use Flutter's Material Design widgets to create the home screen layout. Implement a custom progress ring widget using CustomPainter for showing completion status. Create reusable card widgets for lesson categories with appropriate icons and labels. Design the streak indicator with flame icon and counter. Implement primary CTA button for 'Start Daily Lesson' and secondary buttons for 'Practice' and 'Review' quick actions.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Create golden tests for the home screen layout to verify visual appearance. Write widget tests to ensure all UI components render correctly and are responsive to different screen sizes."
           },
           {
@@ -442,7 +442,7 @@
               "24.1"
             ],
             "details": "Use a state management solution (Bloc, Provider, or Riverpod) to manage the home screen state. Create models for user progress, lesson categories, and streak data. Implement methods to fetch and update this data from the backend. Handle loading, error, and success states appropriately with loading indicators and error messages when needed. Connect UI components from subtask 1 to the state management system.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Write unit tests for state management logic. Create integration tests to verify data flow between UI and state management. Test edge cases like loading states and error handling."
           },
           {
@@ -453,7 +453,7 @@
               "24.2"
             ],
             "details": "Implement a ProgressService that calculates overall user progress based on completed lessons. Create methods to update progress when lessons are completed. Implement logic to persist progress data to Firestore or local storage. Connect the progress ring UI to display the current progress percentage. Add animations for progress updates to provide visual feedback when progress changes.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Write unit tests for progress calculation logic. Test persistence of progress data. Verify progress updates correctly after lesson completion."
           },
           {
@@ -464,7 +464,7 @@
               "24.2"
             ],
             "details": "Create a StreakService to track consecutive days of app usage. Implement logic to increment streak counter when a user completes at least one lesson per day. Add streak reset logic when a day is missed. Implement streak freeze functionality if applicable. Store streak data persistently and handle timezone considerations. Update the streak indicator UI based on the current streak count.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Unit test streak calculation logic with various date scenarios. Test streak persistence across app restarts. Verify streak freezes work correctly if implemented."
           },
           {
@@ -1318,7 +1318,7 @@
     ],
     "metadata": {
       "created": "2025-08-12T21:58:44.052Z",
-      "updated": "2025-08-14T16:43:10.956Z",
+      "updated": "2025-08-15T15:55:53.054Z",
       "description": "Tasks for master context"
     }
   }

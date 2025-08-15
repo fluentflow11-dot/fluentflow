@@ -24,6 +24,9 @@ class OnboardingWizardScreen extends ConsumerStatefulWidget {
 
 class _OnboardingWizardScreenState extends ConsumerState<OnboardingWizardScreen> {
   int _index = 0;
+  final Map<OnboardingStep, DateTime> _stepStart = {};
+  DateTime? _flowStart;
+  int _skippedCount = 0;
 
   static const List<OnboardingStep> _steps = [
     OnboardingStep.account,
@@ -40,12 +43,15 @@ class _OnboardingWizardScreenState extends ConsumerState<OnboardingWizardScreen>
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final cache = ref.read(appCacheProvider);
       final savedIndex = cache.getPref<int>('onboard_step_index') ?? 0;
+      _flowStart = DateTime.now();
+      _stepStart[_steps[_index]] = DateTime.now();
       if (savedIndex > 0 && savedIndex < _steps.length) {
         setState(() => _index = savedIndex);
         try {
           ref.read(appAnalyticsProvider).logOnboardingResume();
           ref.read(appAnalyticsProvider).logOnboardingStepView(step: _steps[_index].name, index: _index + 1);
         } catch (_) {}
+        _stepStart[_steps[_index]] = DateTime.now();
       }
     });
   }
@@ -87,19 +93,34 @@ class _OnboardingWizardScreenState extends ConsumerState<OnboardingWizardScreen>
     }
   }
 
-  void _next() {
+  Future<void> _next() async {
     if (!_validateCurrent()) return;
     if (_index < _steps.length - 1) {
+      // record duration for current step
+      final step = _steps[_index];
+      final start = _stepStart[step] ?? DateTime.now();
+      final durationMs = DateTime.now().difference(start).inMilliseconds;
+      try { ref.read(appAnalyticsProvider).logOnboardingStepDuration(step: step.name, durationMs: durationMs); } catch (_) {}
+
       setState(() => _index += 1);
       ref.read(appAnalyticsProvider).logOnboardingStepView(step: _steps[_index].name, index: _index + 1);
       _persistIndex();
+      _stepStart[_steps[_index]] = DateTime.now();
     } else {
       // Completed onboarding: return to app home (later we will persist completion)
       if (!mounted) return;
-      ref.read(appAnalyticsProvider).logOnboardingComplete();
+      // record last step duration
+      final step = _steps[_index];
+      final start = _stepStart[step] ?? DateTime.now();
+      final durationMs = DateTime.now().difference(start).inMilliseconds;
+      try { ref.read(appAnalyticsProvider).logOnboardingStepDuration(step: step.name, durationMs: durationMs); } catch (_) {}
+      final totalMs = _flowStart == null ? durationMs : DateTime.now().difference(_flowStart!).inMilliseconds;
+      try { ref.read(appAnalyticsProvider).logOnboardingTotalDuration(totalDurationMs: totalMs, stepsSkipped: _skippedCount); } catch (_) {}
+      await ref.read(appAnalyticsProvider).logOnboardingComplete();
       // Persist completion so onboarding doesn't show again
-      ref.read(appCacheProvider).setPref('onboard_complete', true);
-      ref.read(appCacheProvider).setPref('onboard_step_index', null);
+      await ref.read(appCacheProvider).setPref('onboard_complete', true);
+      await ref.read(appCacheProvider).setPref('onboard_step_index', null);
+      if (!mounted) return;
       context.go('/');
     }
   }
@@ -143,7 +164,14 @@ class _OnboardingWizardScreenState extends ConsumerState<OnboardingWizardScreen>
       case OnboardingStep.notifications:
         return const NotificationsStepContent();
       case OnboardingStep.microphoneLanguage:
-        return const MicrophoneStepContent();
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const MicrophoneStepContent(),
+            SizedBox(height: context.spacing.lg),
+            const Expanded(child: LanguageStepContent()),
+          ],
+        );
       default:
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -175,6 +203,7 @@ class _OnboardingWizardScreenState extends ConsumerState<OnboardingWizardScreen>
             TextButton(
               onPressed: () {
                 try { ref.read(appAnalyticsProvider).logOnboardingSkip(step: _steps[_index].name); } catch (_) {}
+                _skippedCount += 1;
                 _next();
               },
               child: const Text('Skip'),

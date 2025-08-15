@@ -9,6 +9,7 @@ import '../../core/analytics.dart';
 import '../../core/theme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../core/storage_debug.dart';
+import 'home_state.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:go_router/go_router.dart';
@@ -54,57 +55,52 @@ class HomeScreen extends ConsumerWidget {
           })
         ],
       ),
-      body: kDebugMode
-          ? SafeArea(
-              child: SingleChildScrollView(
-                padding: EdgeInsets.fromLTRB(
-                  context.spacing.lg,
-                  context.spacing.lg,
-                  context.spacing.lg,
-                  context.spacing.lg + MediaQuery.of(context).viewInsets.bottom,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Session status
-                    Builder(builder: (context) {
-                      final user = FirebaseAuth.instance.currentUser;
-                      final label = user == null
-                          ? 'Not signed in'
-                          : (user.isAnonymous ? 'Signed in (guest)' : 'Signed in as ${user.email ?? user.uid}');
-                      return Container(
-                        width: double.infinity,
-                        padding: EdgeInsets.all(context.spacing.md),
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.surfaceContainerHigh,
-                          borderRadius: context.radii.brMd,
-                        ),
-                        child: Text(label),
-                      );
-                    }),
-                    SizedBox(height: context.spacing.lg),
-                    Text('Theme Preview', style: Theme.of(context).textTheme.headlineMedium),
-                    SizedBox(height: context.spacing.md),
-                    _InteractiveSwatches(),
-                    SizedBox(height: context.spacing.lg),
-                    ElevatedButton(
-                      onPressed: () {},
-                      child: const Text('Elevated Button'),
-                    ),
-                    SizedBox(height: context.spacing.sm),
-                    OutlinedButton(
-                      onPressed: () {},
-                      child: const Text('Outlined Button'),
-                    ),
-                    SizedBox(height: context.spacing.sm),
-                    const TextField(decoration: InputDecoration(labelText: 'Input')),
-                    SizedBox(height: context.spacing.md),
-                    // Remote Config sample display
-                    Builder(builder: (context) {
-                      final welcome = FirebaseRemoteConfig.instance.getString('welcome_message');
-                      return Text('RC welcome_message: ${welcome.isEmpty ? '(empty)' : welcome}');
-                    }),
-                    SizedBox(height: context.spacing.lg),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: EdgeInsets.fromLTRB(
+            context.spacing.lg,
+            context.spacing.lg,
+            context.spacing.lg,
+            context.spacing.lg + MediaQuery.of(context).viewInsets.bottom,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Session status
+              Builder(builder: (context) {
+                final user = FirebaseAuth.instance.currentUser;
+                final label = user == null
+                    ? 'Not signed in'
+                    : (user.isAnonymous ? 'Signed in (guest)' : 'Signed in as ${user.email ?? user.uid}');
+                return Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.all(context.spacing.md),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.surfaceContainerHigh,
+                    borderRadius: context.radii.brMd,
+                  ),
+                  child: Text(label),
+                );
+              }),
+              SizedBox(height: context.spacing.lg),
+              // Home dashboard (baseline UI for 24.1)
+              Text('Welcome back', style: Theme.of(context).textTheme.headlineMedium),
+              SizedBox(height: context.spacing.md),
+              _ProgressCard(),
+              SizedBox(height: context.spacing.lg),
+              Text('Explore', style: Theme.of(context).textTheme.titleLarge),
+              SizedBox(height: context.spacing.md),
+              _CategoriesGrid(),
+              SizedBox(height: context.spacing.lg),
+              if (kDebugMode) ...[
+                Text('Debug Tools', style: Theme.of(context).textTheme.titleLarge),
+                SizedBox(height: context.spacing.md),
+                // Remote Config sample display
+                Builder(builder: (context) {
+                  final welcome = FirebaseRemoteConfig.instance.getString('welcome_message');
+                  return Text('RC welcome_message: ${welcome.isEmpty ? '(empty)' : welcome}');
+                }),
+                SizedBox(height: context.spacing.lg),
                     FilledButton.icon(
                       onPressed: () async {
                         if (!kDebugMode) return;
@@ -222,7 +218,7 @@ class HomeScreen extends ConsumerWidget {
                         await cache.setPref('age_gate_verified', false);
                         await cache.setPref('birthdate_millis', null);
                         if (!context.mounted) return;
-                        context.go('/age-gate');
+                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Age gate reset. Restart app or open onboarding intro to test.')));
                       },
                       icon: const Icon(Icons.refresh),
                       label: const Text('Debug: Reset age gate'),
@@ -249,6 +245,7 @@ class HomeScreen extends ConsumerWidget {
                         await cache.setPref('onboard_time_minutes', null);
                         await cache.setPref('onboard_notifications', false);
                         await cache.setPref('onboard_microphone', false);
+                        await cache.setPref('onboard_step_index', 0);
                         // Also reset in-memory state providers
                         ref.read(onboardingGoalsProvider.notifier).state = <String>[];
                         ref.read(onboardingLevelProvider.notifier).state = null;
@@ -257,7 +254,7 @@ class HomeScreen extends ConsumerWidget {
                         ref.read(onboardingNotificationsGrantedProvider.notifier).state = false;
                         ref.read(onboardingMicrophoneAllowedProvider.notifier).state = false;
                         if (!context.mounted) return;
-                        context.go('/onboarding-intro');
+                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Onboarding reset. Restart app or open onboarding intro to test.')));
                       },
                       icon: const Icon(Icons.restart_alt),
                       label: const Text('Debug: Reset onboarding'),
@@ -287,25 +284,25 @@ class HomeScreen extends ConsumerWidget {
                         if (!kDebugMode) return;
                         final scaffold = ScaffoldMessenger.of(context);
                         try {
-                      final appCache = ref.read(appCacheProvider);
+                          final appCache = ref.read(appCacheProvider);
                           final now = DateTime.now().toIso8601String();
                           await appCache.writeCache('ping', now);
                           final readBack = appCache.readCache<String>('ping');
-                      if (!context.mounted) return;
-                      scaffold.showSnackBar(SnackBar(content: Text('Hive OK: $readBack')));
+                          if (!context.mounted) return;
+                          scaffold.showSnackBar(SnackBar(content: Text('Hive OK: $readBack')));
                         } catch (e) {
-                      if (!context.mounted) return;
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Hive error: $e')));
+                          if (!context.mounted) return;
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Hive error: $e')));
                         }
                       },
                       icon: const Icon(Icons.sd_storage),
                       label: const Text('Debug: Test Hive Cache'),
                     ),
                   ],
-                ),
-              ),
-            )
-          : const Center(child: Text('Home')),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
@@ -364,6 +361,110 @@ class _InteractiveSwatches extends ConsumerWidget {
           child: _ColorSwatchBox(label: '$label (tap to apply)', color: color),
         );
       }).toList(),
+    );
+  }
+}
+
+
+class _ProgressCard extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final color = Theme.of(context).colorScheme;
+    final progress = ref.watch(dailyProgressProvider);
+    final streak = ref.watch(streakProvider);
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(context.spacing.lg),
+      decoration: BoxDecoration(
+        color: color.surfaceContainerHighest,
+        borderRadius: context.radii.brMd,
+      ),
+      child: Row(
+        children: [
+          SizedBox(
+            height: 64,
+            width: 64,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                CircularProgressIndicator(value: progress.percent.clamp(0.0, 1.0)),
+                Text('${(progress.percent * 100).round()}%'),
+              ],
+            ),
+          ),
+          SizedBox(width: context.spacing.lg),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('Daily lesson progress'),
+                const SizedBox(height: 4),
+                Text('Streak: ${streak.count} day${streak.count == 1 ? '' : 's'}'),
+              ],
+            ),
+          ),
+          FilledButton(
+            onPressed: () async {
+              await ref.read(dailyProgressProvider.notifier).increment();
+              await ref.read(streakProvider.notifier).recordActivity();
+              if (!context.mounted) return;
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Progress +1 recorded')));
+              context.go('/lesson-overview');
+            },
+            child: const Text('Start'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _CategoriesGrid extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final items = [
+      {'icon': Icons.today, 'label': 'Daily Lesson'},
+      {'icon': Icons.message, 'label': 'Conversation'},
+      {'icon': Icons.record_voice_over, 'label': 'Pronunciation'},
+      {'icon': Icons.view_module, 'label': 'Grammar Tiles'},
+      {'icon': Icons.sports_score, 'label': 'Practice'},
+      {'icon': Icons.emoji_events, 'label': 'League'},
+    ];
+    return GridView.builder(
+      physics: const NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      itemCount: items.length,
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        mainAxisSpacing: 12,
+        crossAxisSpacing: 12,
+        childAspectRatio: 3 / 2,
+      ),
+      itemBuilder: (context, index) {
+        final it = items[index];
+        return InkWell(
+          onTap: () {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Coming soon: ${it['label']}')));
+          },
+          borderRadius: context.radii.brMd,
+          child: Container(
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surfaceContainerLow,
+              borderRadius: context.radii.brMd,
+              border: Border.all(color: Colors.black12),
+            ),
+            padding: EdgeInsets.all(context.spacing.md),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(it['icon'] as IconData),
+                const Spacer(),
+                Text(it['label'] as String, style: Theme.of(context).textTheme.titleMedium),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

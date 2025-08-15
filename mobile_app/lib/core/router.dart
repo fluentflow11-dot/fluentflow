@@ -14,6 +14,8 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'hive_init.dart';
 import '../features/onboarding/intro_screen.dart';
 import '../features/onboarding/wizard_screen.dart';
+import '../features/lesson/lesson_overview_screen.dart';
+import '../features/lesson/lesson_player_screen.dart';
 
 class GoRouterRefreshStream extends ChangeNotifier {
   GoRouterRefreshStream(Stream<dynamic> stream) {
@@ -48,6 +50,16 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: '/',
         name: 'home',
         builder: (context, state) => const HomeScreen(),
+      ),
+      GoRoute(
+        path: '/lesson-overview',
+        name: 'lesson-overview',
+        builder: (context, state) => const LessonOverviewScreen(),
+      ),
+      GoRoute(
+        path: '/lesson',
+        name: 'lesson',
+        builder: (context, state) => const LessonPlayerScreen(),
       ),
       GoRoute(
         path: '/onboarding-intro',
@@ -88,25 +100,53 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       final user = authChanges.asData?.value;
       // Simple local checks using Hive prefs
       final prefsBox = Hive.box(appPrefsBoxName);
-      final ageGateVerified = (prefsBox.get('age_gate_verified') as bool?) ?? false;
-      final onboardingComplete = (prefsBox.get('onboard_complete') as bool?) ?? false;
+      final ageGateVerified = prefsBox.get('age_gate_verified') == true;
+      final onboardingComplete = prefsBox.get('onboard_complete') == true;
 
       if (!isAgeGateRoute && !ageGateVerified) {
+        if (kDebugMode) {
+          // ignore: avoid_print
+          print('[router] redirect → /age-gate (ageGateVerified=false, from=${state.matchedLocation})');
+        }
         return '/age-gate';
       }
 
-      if (!onboardingComplete && state.matchedLocation != '/onboarding-intro' && state.matchedLocation != '/onboarding-wizard') {
+      // While onboarding is incomplete, allow navigating to onboarding routes and auth/forgot pages; redirect all else to intro
+      if (
+        ageGateVerified &&
+        !onboardingComplete &&
+        state.matchedLocation != '/onboarding-intro' &&
+        state.matchedLocation != '/onboarding-wizard' &&
+        state.matchedLocation != '/auth' &&
+        state.matchedLocation != '/forgot-password'
+      ) {
+        if (kDebugMode) {
+          // ignore: avoid_print
+          print('[router] redirect → /onboarding-intro (onboarding incomplete, from=${state.matchedLocation})');
+        }
         return '/onboarding-intro';
       }
 
       if (user == null && !isAuthRoute && !isForgotRoute && ageGateVerified && onboardingComplete) {
+        if (kDebugMode) {
+          // ignore: avoid_print
+          print('[router] redirect → /auth (signed out, onboarding complete)');
+        }
         return '/auth';
       }
       if (user != null && isAuthRoute) {
+        if (kDebugMode) {
+          // ignore: avoid_print
+          print('[router] redirect → / (already signed in, trying to visit /auth)');
+        }
         return '/';
       }
       // If user is newly signed-in, allow navigating to /profile manually after first login.
       if (user != null && isProfileRoute) {
+        if (kDebugMode) {
+          // ignore: avoid_print
+          print('[router] redirect → / (prevent direct /profile)');
+        }
         return '/';
       }
       return null;
